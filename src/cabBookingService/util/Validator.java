@@ -1,6 +1,9 @@
 package cabBookingService.util;
 
 public class Validator {
+
+    private Validator(){}
+
     public static boolean isValid10DigitPhone(String phoneNumber) {
         if (phoneNumber == null) {
             return false;
@@ -16,6 +19,5 @@ public class Validator {
         }
         return email.matches(EMAIL_REGEX);
     }
-
 
 }
