@@ -1,6 +1,7 @@
 package cabBookingService.model;
 
 import cabBookingService.util.IdGenerator;
+import cabBookingService.util.Validator;
 
 import java.util.Objects;
 
@@ -20,8 +21,16 @@ public class User {
             throw new IllegalArgumentException("Phone cannot be null or blank");
         }
 
+        if(!Validator.isValid10DigitPhone(phone)){
+            throw new IllegalArgumentException("Invalid phone number format");
+        }
+
         if(email == null || email.isBlank()) {
             throw new IllegalArgumentException("Email cannot be null or blank");
+        }
+
+        if(!Validator.isValidEmail(email)){
+            throw new IllegalArgumentException("Invalid email format");
         }
 
         if(userRole == null) {

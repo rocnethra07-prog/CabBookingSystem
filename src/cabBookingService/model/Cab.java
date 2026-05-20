@@ -24,6 +24,7 @@ public class Cab {
         if(cabType == null) {
             throw new IllegalArgumentException("Cab type cannot be null");
         }
+
         this.cabId = IdGenerator.generateCabId();
         this.registrationNumber = registrationNumber.trim().toUpperCase();
         this.model = model.trim();
