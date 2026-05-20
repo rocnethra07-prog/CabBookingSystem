@@ -16,14 +16,22 @@ public class Ride {
     private RideStatus rideStatus; //not final, status will get updated
     private final LocalDateTime bookedAt;
 
-
     public Ride(User rider, Driver driver, String pickupLocation, String dropLocation, double fare) {
         if(rider == null) {
             throw new IllegalArgumentException("Rider cannot be null");
         }
 
+        //only rider is allowed to book a ride
+        if(rider.getUserRole() != UserRole.RIDER){
+            throw new IllegalArgumentException("User is not a rider");
+        }
+
         if(driver == null) {
             throw new IllegalArgumentException("Driver cannot be null");
+        }
+
+        if(!driver.isAvailable()){
+            throw new IllegalArgumentException("Driver is not available");
         }
 
         if(pickupLocation == null || pickupLocation.isBlank()) {
