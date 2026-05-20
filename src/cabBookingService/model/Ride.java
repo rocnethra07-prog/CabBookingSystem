@@ -42,7 +42,7 @@ public class Ride {
             throw new IllegalArgumentException("Drop location cannot be null or blank");
         }
 
-        if(pickupLocation.trim().equals(dropLocation.trim())){
+        if(pickupLocation.trim().equalsIgnoreCase(dropLocation.trim())){
             throw new IllegalArgumentException("Pick Up and Destination cannot be the same");
         }
 
