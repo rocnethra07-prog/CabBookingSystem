@@ -69,16 +69,5 @@ public class Driver extends User{
         this.earnings += amount;
     }
 
-    @Override
-    public boolean equals(Object object) {
-        if(this == object) return true;
-        if (!(object instanceof Driver driver)) return false;
-        if (!super.equals(object)) return false;
-        return Objects.equals(licenseNumber, driver.licenseNumber);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), licenseNumber);
-    }
+    //no equals check, inherits user class equals()
 }
