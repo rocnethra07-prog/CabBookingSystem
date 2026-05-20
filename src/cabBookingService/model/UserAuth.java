@@ -4,7 +4,6 @@ import java.util.Objects;
 
 
 //Credentials related class : for password
-
 public class UserAuth {
     private final String userId;
     private final String hashedPassword;
@@ -26,7 +25,7 @@ public class UserAuth {
         if(inputPassword == null || inputPassword.isBlank()){
             return false;
         }
-        return Objects.equals(this.hashedPassword, hash(inputPassword));
+        return Objects.equals(this.hashedPassword, hash(inputPassword.trim()));
     }
 
     private String hash(String password){
