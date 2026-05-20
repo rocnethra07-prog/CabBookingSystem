@@ -21,12 +21,6 @@ public class UserAuth {
         this.hashedPassword = hash(password.trim());
     }
 
-    public boolean checkPassword(String inputPassword){
-        if(inputPassword == null || inputPassword.isBlank()){
-            return false;
-        }
-        return Objects.equals(this.hashedPassword, hash(inputPassword.trim()));
-    }
 
     private String hash(String password){
         return Integer.toHexString(password.hashCode());
