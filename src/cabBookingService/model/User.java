@@ -37,10 +37,6 @@ public class User {
             throw new IllegalArgumentException("User role cannot be null");
         }
 
-        if(userRole == UserRole.DRIVER) {
-            throw new IllegalArgumentException("Driver must be created using Driver class");
-        }
-
         this.userId = IdGenerator.generateUserId();
         this.name = name.trim();
         this.phone = phone.trim();
