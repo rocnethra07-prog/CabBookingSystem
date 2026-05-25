@@ -12,6 +12,9 @@ public class Cab {
     private final CabType cabType;
     private final String registrationNumber;
 
+//    for now, commented it because there is no driver lookup from cab (if needed could be added)
+//    private final String driverId; //reference of the driver who owns this cab
+
     public Cab(String registrationNumber, String model, CabType cabType) {
         if(registrationNumber == null || registrationNumber.isBlank()) {
             throw new IllegalArgumentException("Registration number cannot be null or blank");

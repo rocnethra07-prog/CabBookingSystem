@@ -7,14 +7,18 @@ import java.util.Objects;
 
 public class User {
     private final String userId;
-    private final String name;
+    private String name;
     private final String email;
-    private final String phone;
+    private String phone;
     private final UserRole userRole;
 
     public User(String name, String phone, String email,UserRole userRole){
         if(name == null || name.isBlank()) {
             throw new IllegalArgumentException("Name cannot be null or blank");
+        }
+
+        if(!Validator.isValidName(name)){
+            throw new IllegalArgumentException("Name must contain minimum 3 characters");
         }
 
         if(phone == null || phone.isBlank()) {
@@ -52,8 +56,33 @@ public class User {
         return name;
     }
 
+    public void setName(String name){
+        if(name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Name cannot be null or blank");
+
+        }
+
+        if (!Validator.isValidName(name)){
+            throw new IllegalArgumentException("Name must contain minimum 3 characters");
+        }
+
+        this.name = name.trim();
+    }
+
     public String getPhone() {
         return phone;
+    }
+
+    public void setPhone(String phone){
+        if(phone == null || phone.isBlank()) {
+            throw new IllegalArgumentException("Phone cannot be null or blank");
+        }
+
+        if(!Validator.isValid10DigitPhone(phone)){
+            throw new IllegalArgumentException("Invalid phone number format");
+        }
+
+        this.phone = phone.trim();
     }
 
     public String getEmail(){

@@ -5,33 +5,23 @@ import cabBookingService.util.IdGenerator;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-//all fields are final
 public class Ride {
     private final String id;
-    private final User rider;
-    private final Driver driver;
+    private final String riderId;
+    private final String driverId;
     private final String pickupLocation;
     private final String dropLocation;
     private final double fare;
     private RideStatus rideStatus; //not final, status will get updated
     private final LocalDateTime bookedAt;
 
-    public Ride(User rider, Driver driver, String pickupLocation, String dropLocation, double fare) {
-        if(rider == null) {
-            throw new IllegalArgumentException("Rider cannot be null");
+    public Ride(String riderId, String driverId, String pickupLocation, String dropLocation, double fare) {
+        if(riderId == null || riderId.isBlank()) {
+            throw new IllegalArgumentException("Rider ID cannot be null or empty");
         }
 
-        //only rider is allowed to book a ride
-        if(rider.getUserRole() != UserRole.RIDER){
-            throw new IllegalArgumentException("User is not a rider");
-        }
-
-        if(driver == null) {
-            throw new IllegalArgumentException("Driver cannot be null");
-        }
-
-        if(!driver.isAvailable()){
-            throw new IllegalArgumentException("Driver is not available");
+        if(driverId == null || driverId.isBlank()) {
+            throw new IllegalArgumentException("Driver ID cannot be null or empty");
         }
 
         if(pickupLocation == null || pickupLocation.isBlank()) {
@@ -51,8 +41,8 @@ public class Ride {
         }
 
         this.id = IdGenerator.generateRideId();
-        this.rider = rider;
-        this.driver = driver;
+        this.riderId = riderId.trim();
+        this.driverId = driverId.trim();
         this.pickupLocation = pickupLocation.trim();
         this.dropLocation = dropLocation.trim();
         this.fare = fare;
@@ -68,12 +58,12 @@ public class Ride {
         return rideStatus;
     }
 
-    public User getRider() {
-        return rider;
+    public String getRiderId() {
+        return riderId;
     }
 
-    public Driver getDriver() {
-        return driver;
+    public String getDriverId() {
+        return driverId;
     }
 
     public String getPickupLocation() {
@@ -96,6 +86,21 @@ public class Ride {
         if(rideStatus == null){
             throw new IllegalArgumentException("Ride status cannot be null");
         }
+
+        if(rideStatus == RideStatus.CANCELLED && this.rideStatus != RideStatus.BOOKED){
+            throw new IllegalArgumentException("Only booked rides can be cancelled");
+        }
+
+        if(rideStatus == RideStatus.COMPLETED && this.rideStatus != RideStatus.BOOKED){
+           throw  new IllegalArgumentException("Only booked rides can be completed");
+        }
+
+        if(rideStatus == RideStatus.BOOKED && (this.rideStatus == RideStatus.CANCELLED || this.rideStatus == RideStatus.COMPLETED)){
+            throw new IllegalStateException(
+                    "Completed or cancelled rides cannot be booked again"
+            );
+        }
+
         this.rideStatus = rideStatus;
     }
 

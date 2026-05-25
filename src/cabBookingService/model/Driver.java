@@ -1,17 +1,15 @@
 package cabBookingService.model;
 
-import java.util.Objects;
-
 //driver details
 public class Driver extends User{
 
-    private final Cab cab; //a driver owns only one cab
+    private final String cabId; //a driver owns only one cab
     private final String licenseNumber;
     private String currentLocation;
     private double earnings;
     private boolean isAvailable;
 
-    public Driver(String name, String phone,String email,String currentLocation, String licenseNumber, Cab cab){
+    public Driver(String name, String phone,String email,String currentLocation, String licenseNumber, String cabId){
         super(name, phone, email, UserRole.DRIVER);
         if(currentLocation == null || currentLocation.isBlank()) {
             throw new IllegalArgumentException("Location cannot be null or blank");
@@ -21,18 +19,18 @@ public class Driver extends User{
             throw new IllegalArgumentException("License number cannot be null or blank");
         }
 
-        if(cab == null) {
-            throw new IllegalArgumentException("Cab cannot be null");
+        if(cabId == null || cabId.isBlank()) {
+            throw new IllegalArgumentException("Cab ID cannot be null or blank");
         }
         this.currentLocation = currentLocation.trim();
         this.licenseNumber = licenseNumber.trim().toUpperCase();
         this.earnings = 0.0;
         this.isAvailable = true;
-        this.cab = cab;
+        this.cabId = cabId.trim();
     }
 
-    public Cab getCab() {
-        return cab;
+    public String getCabId() {
+        return cabId;
     }
 
     public String getCurrentLocation() {
