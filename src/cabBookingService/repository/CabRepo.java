@@ -9,7 +9,7 @@ import java.util.Set;
 
 public class CabRepo {
 
-    private static CabRepo cabRepo ;
+    private final static CabRepo INSTANCE = new CabRepo() ;
 
     //key: id
     private final Map<String, Cab> cabsById = new HashMap<>();
@@ -19,10 +19,7 @@ public class CabRepo {
     private CabRepo(){}
 
     public static CabRepo getInstance(){
-        if(cabRepo == null) {
-            cabRepo = new CabRepo();
-        }
-        return cabRepo;
+        return INSTANCE;
     }
 
     public void save(Cab cab) {

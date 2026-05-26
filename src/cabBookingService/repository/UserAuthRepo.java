@@ -8,16 +8,13 @@ import java.util.Map;
 //repo for storing the user auth details
 public class UserAuthRepo {
 
-    private static UserAuthRepo userAuthRepo;
+    private final static UserAuthRepo INSTANCE = new UserAuthRepo();
     private final Map<String, UserAuth> credentialsByUserId = new HashMap<>();
 
     private UserAuthRepo(){}
 
     public static UserAuthRepo getInstance(){
-        if(userAuthRepo == null){
-            userAuthRepo = new UserAuthRepo();
-        }
-        return userAuthRepo;
+        return INSTANCE;
     }
 
     public void save(String userId, UserAuth userAuth) {

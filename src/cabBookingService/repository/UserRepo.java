@@ -9,16 +9,13 @@ import java.util.Map;
 //repo for storing all the users
 public class UserRepo {
 
-    private static UserRepo userRepo ;
+    private final static UserRepo INSTANCE = new UserRepo() ;
     private final Map<String, User> usersByEmail = new HashMap<>(); //key: email
 
     private UserRepo(){}
 
     public static UserRepo getInstance(){
-        if(userRepo == null){
-            userRepo = new UserRepo();
-        }
-        return userRepo;
+        return INSTANCE;
     }
 
     public void save(User user) {
