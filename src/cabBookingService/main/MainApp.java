@@ -72,6 +72,7 @@ public class MainApp {
                     System.out.println("Invalid choice. Please try again.");
             }
         }
+        sc.close();
     }
 
     private static void handleSession(User user,MenuHandler menuHandler){
