@@ -3,7 +3,7 @@ package cabBookingService.model;
 //driver details
 public class Driver extends User{
 
-    private final String cabId; //a driver owns only one cab
+    private final String cabId;
     private final String licenseNumber;
     private String currentLocation;
     private double earnings;

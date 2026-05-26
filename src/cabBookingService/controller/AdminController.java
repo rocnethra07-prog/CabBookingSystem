@@ -59,7 +59,7 @@ public class AdminController {
             System.out.println("User email already exists. Enter a valid email.");
         }
 
-        String password = InputUtil.getPassword(sc, "Enter password: ", "Password must be 8+ characters with an uppercase letter, lowercase letter, and a special character. No spaces.");
+        String password = InputUtil.getPassword(sc, "Enter password: ", "Password must be at least 8 characters, with an uppercase letter, a lowercase letter, and a special character. Spaces are not allowed.");
 
         String currentLocation = InputUtil.getNonEmptyInput(sc, "Enter current location: " , "Location cannot be empty");
 
@@ -83,7 +83,7 @@ public class AdminController {
             System.out.println("Registration already exists");
         }
 
-        CabType cabType = selectCabType();
+        CabType cabType = InputUtil.selectCabType(sc);
 
         Driver driver = adminService.addDriver(
                 name, phone, email, password,
@@ -103,23 +103,4 @@ public class AdminController {
         System.out.println("Driver ID : " +driver.getUserId());
     }
 
-    private CabType selectCabType(){
-        while (true) {
-            System.out.println("Cab type: ");
-            System.out.println("1 MINI \n2 SEDAN \n3 SUV");
-
-            String type = sc.nextLine().trim();
-
-            switch (type) {
-                case "1" :
-                    return CabType.MINI;
-                case "2" :
-                    return CabType.SEDAN;
-                case "3":
-                    return CabType.SUV;
-                default :
-                    System.out.println("Invalid choice");
-            }
-        }
-    }
 }

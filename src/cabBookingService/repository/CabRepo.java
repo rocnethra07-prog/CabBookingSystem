@@ -3,7 +3,9 @@ package cabBookingService.repository;
 import cabBookingService.model.Cab;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class CabRepo {
 
@@ -12,9 +14,8 @@ public class CabRepo {
     //key: id
     private final Map<String, Cab> cabsById = new HashMap<>();
 
-    //key: registration number
-    private final Map<String, Cab> cabsByRegNumber = new HashMap<>();
-
+    //to check uniqueness
+    private final Set<String> registrationNumberSet = new HashSet<>();
     private CabRepo(){}
 
     public static CabRepo getInstance(){
@@ -26,14 +27,14 @@ public class CabRepo {
 
     public void save(Cab cab) {
         cabsById.put(cab.getCabId(), cab);
-        cabsByRegNumber.put(cab.getRegistrationNumber(), cab);
+        registrationNumberSet.add(cab.getRegistrationNumber());
     }
 
     public boolean existsByRegNumber(String regNumber) {
         if(regNumber == null){
             return false;
         }
-        return cabsByRegNumber.containsKey(regNumber.trim().toUpperCase());
+        return registrationNumberSet.contains(regNumber.trim().toUpperCase());
     }
 
     public Cab findById(String id){

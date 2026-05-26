@@ -1,5 +1,7 @@
 package cabBookingService.util;
 
+import cabBookingService.model.CabType;
+
 import java.util.Scanner;
 import java.util.function.Predicate;
 
@@ -39,4 +41,26 @@ public class InputUtil {
         return getValidatedInput(sc, prompt, Validator::isValidPassword, errorMessage);
     }
 
+    public static CabType selectCabType(Scanner sc){
+
+        while (true){
+            System.out.println("Cab type:");
+            System.out.println("1 MINI");
+            System.out.println("2 SEDAN");
+            System.out.println("3 SUV");
+
+            String input = sc.nextLine().trim();
+
+            switch (input){
+                case "1":
+                    return CabType.MINI;
+                case "2":
+                    return CabType.SEDAN;
+                case "3":
+                    return CabType.SUV;
+                default:
+                    System.out.println("Invalid cab type");
+            }
+        }
+    }
 }
