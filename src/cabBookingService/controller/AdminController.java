@@ -17,7 +17,7 @@ public class AdminController {
         this.sc = sc;
     }
 
-    public void adminDashBoard() {
+    public void adminDashBoard(){
         System.out.println("\n---- ADMIN MENU ----");
 
         boolean back = false;
@@ -63,6 +63,8 @@ public class AdminController {
 
         String currentLocation = InputUtil.getNonEmptyInput(sc, "Enter current location: " , "Location cannot be empty");
 
+
+        //for now checking if license and registration number is not empty only
         String licenseNumber;
         while(true){
             licenseNumber = InputUtil.getNonEmptyInput(sc, "Enter license number: ", "License number cannot be empty");
