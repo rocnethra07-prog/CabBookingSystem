@@ -3,11 +3,6 @@ package cabBookingService.repository;
 import cabBookingService.exception.CabBookingException;
 import cabBookingService.model.Cab;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 public class CabRepo extends BaseRepository<Cab>{
 
     private final static CabRepo INSTANCE = new CabRepo() ;
@@ -19,7 +14,11 @@ public class CabRepo extends BaseRepository<Cab>{
     }
 
     public void save(Cab cab) {
-        super.save(cab.getCabId(), cab);
+        String key = cab.getCabId().trim();
+        if(existsByKey(key)){
+            throw new CabBookingException("Record already exists for key : " + key);
+        }
+        super.save(key, cab);
     }
 
     public boolean existsByRegNumber(String regNumber) {

@@ -2,6 +2,7 @@ package cabBookingService.auth;
 
 
 //external class for hashing password
+import cabBookingService.exception.CabBookingException;
 import org.mindrot.jbcrypt.BCrypt;
 
 
@@ -13,7 +14,7 @@ public class UserAuth {
     public UserAuth(String password) {
 
         if(password == null || password.isBlank()){
-            throw new IllegalArgumentException("Password cannot be null or empty.");
+            throw new CabBookingException("Password cannot be null or empty.");
         }
         this.hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
     }
@@ -25,4 +26,5 @@ public class UserAuth {
         return BCrypt.checkpw(inputPassword, this.hashedPassword);
     }
 
+    //update password not implemented
 }

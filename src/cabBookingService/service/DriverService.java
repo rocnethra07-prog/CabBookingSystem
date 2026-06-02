@@ -1,5 +1,6 @@
 package cabBookingService.service;
 
+import cabBookingService.exception.CabBookingException;
 import cabBookingService.model.Driver;
 import cabBookingService.model.Location;
 import cabBookingService.model.Ride;
@@ -30,7 +31,7 @@ public class DriverService {
 
     public void completeRide(Ride ride, Driver driver){
         if(!ride.getDriverId().equals(driver.getUserId())){
-            throw new IllegalArgumentException("Only the assigned driver can complete this ride");
+            throw new CabBookingException("Only the assigned driver can complete this ride");
         }
 
         ride.setRideStatus(RideStatus.COMPLETED);
@@ -40,7 +41,7 @@ public class DriverService {
 
     public void cancelRide(Ride ride, Driver driver){
         if(!ride.getDriverId().equals(driver.getUserId())){
-            throw new IllegalArgumentException("Only the assigned driver can cancel this ride");
+            throw new CabBookingException("Only the assigned driver can cancel this ride");
         }
 
         ride.setRideStatus(RideStatus.CANCELLED);

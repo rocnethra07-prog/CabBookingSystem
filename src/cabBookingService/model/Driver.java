@@ -90,11 +90,11 @@ public class Driver extends User{
 
     @Override
     public String toString() {
-        return "Driver " + getUserId() +
-                "\nCab Id           : " + cabId +
-                "\nCurrent Location : " + currentLocation +
-                "\nAvailability     : " + ((isAvailable) ? "YES" : "NO") +
+        return super.toString() +
                 "\nLicense Number   : " + licenseNumber +
-                "\nEarnings         : " + earnings;
+                "\nLocation         : " + currentLocation +
+                "\nAvailability     : " + (isAvailable ? "AVAILABLE" : "BUSY") +
+                "\nTotal Earnings   : " + earnings +
+                "\nCab ID           : " + cabId;
     }
 }

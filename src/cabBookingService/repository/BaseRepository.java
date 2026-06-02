@@ -19,9 +19,7 @@ public abstract class BaseRepository<T> implements Repository<T> {
             throw new CabBookingException("Entity cannot be null");
         }
         key = key.trim();
-        if(storage.containsKey(key)){
-            throw new CabBookingException("Record already exists for key : " + key);
-        }
+
         storage.put(key, entity);
     }
 

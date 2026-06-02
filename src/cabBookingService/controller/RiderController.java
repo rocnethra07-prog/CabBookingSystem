@@ -23,11 +23,12 @@ public class RiderController {
 
         boolean back = false;
         while(!back) {
-            System.out.println("1 Book ride");
-            System.out.println("2 View current ride");
-            System.out.println("3 View ride history");
-            System.out.println("4 Update profile");
-            System.out.println("0 Logout");
+            System.out.println("1. Book ride");
+            System.out.println("2. View current ride");
+            System.out.println("3. View ride history");
+            System.out.println("4. Update profile");
+            //have to do change password
+            System.out.println("0. Logout");
 
             switch (sc.nextLine().trim()){
                 case "1":

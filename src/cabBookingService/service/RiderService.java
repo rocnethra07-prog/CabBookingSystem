@@ -64,7 +64,7 @@ public class RiderService {
         return (getCurrentBookedRide(user) != null);
     }
 
-    //Since fare calculation is simple, I did not move it to a separate class (later if needed could be moved to a separate FareCalculator class)
+    //Since fare calculation is very basic and simple, I did not move it to a separate class (later if needed could be moved to a separate FareCalculator class)
     private BigDecimal fareBasedOnCabType(CabType cabType){
         return switch (cabType){
             case SUV -> BigDecimal.valueOf(250);
@@ -79,7 +79,7 @@ public class RiderService {
 
     public void cancelRide(Ride ride, User rider){
         if(!ride.getRiderId().equals(rider.getUserId())){
-            throw new IllegalArgumentException("Only the rider who booked this ride can cancel it");
+            throw new CabBookingException("Only the rider who booked this ride can cancel it");
         }
 
         ride.setRideStatus(RideStatus.CANCELLED);

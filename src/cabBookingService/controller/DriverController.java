@@ -31,6 +31,7 @@ public class DriverController {
             System.out.println("2. Update Profile");
             System.out.println("3. Show earnings");
             System.out.println("4. View ride history");
+            //have to do change password
             System.out.println("0. Back");
 
             System.out.print("Choose: ");
@@ -95,8 +96,6 @@ public class DriverController {
                     break;
                 case "2":
                     cancelRide(ride, driver);
-//                    driverService.cancelRide(ride, driver);
-//                    System.out.println("Ride cancelled");
                     back = true;
                     break;
                 case "0":

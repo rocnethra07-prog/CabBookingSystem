@@ -1,5 +1,6 @@
 package cabBookingService.repository;
 
+import cabBookingService.exception.CabBookingException;
 import cabBookingService.model.Ride;
 import cabBookingService.model.RideStatus;
 
@@ -16,7 +17,11 @@ public class RideRepo extends BaseRepository<Ride> {
     }
 
     public void save(Ride ride){
-        super.save(ride.getId(), ride);
+        String key = ride.getId().trim();
+        if(existsByKey(key)){
+            throw new CabBookingException("Record already exists for key : " + key);
+        }
+        super.save(key, ride);
     }
 
     public List<Ride> findRidesByRider(String riderId){
@@ -57,5 +62,15 @@ public class RideRepo extends BaseRepository<Ride> {
             }
         }
         return null;
+    }
+
+    public List<Ride> findRidesByStatus(RideStatus status){
+        List<Ride> rides = new ArrayList<>();
+        for(Ride ride : storage.values()){
+            if(ride.getRideStatus() == status){
+                rides.add(ride);
+            }
+        }
+        return rides;
     }
 }

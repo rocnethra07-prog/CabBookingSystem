@@ -1,50 +1,3 @@
-//package cabBookingService.repository;
-//
-//import cabBookingService.auth.UserAuth;
-//
-//import java.util.HashMap;
-//import java.util.Map;
-//
-////repo for storing the user auth details
-//public class UserAuthRepo extends BaseRepository<UserAuth> {
-//
-//    private final static UserAuthRepo INSTANCE = new UserAuthRepo();
-//
-//    private UserAuthRepo(){}
-//
-//    public static UserAuthRepo getInstance(){
-//        return INSTANCE;
-//    }
-//
-//    @Override
-//    protected String getKey(UserAuth auth) {
-//        return auth.getUserId();
-//    }
-//
-//    public boolean validateCredentials(
-//            String userId,
-//            String password){
-//
-//        UserAuth auth = findById(userId);
-//
-//        return auth.checkPassword(password);
-//    }
-//
-////    public void save(String userId, UserAuth userAuth) {
-////        credentialsByUserId.put(userId, userAuth);
-////    }
-////
-////    public boolean validateCredentials(String userId, String password){
-////        UserAuth credential = credentialsByUserId.get(userId);
-////
-////        if(credential == null){
-////            return false;
-////        }
-////        return credential.checkPassword(password);
-////    }
-//}
-
-
 package cabBookingService.repository;
 
 import cabBookingService.auth.UserAuth;
@@ -59,6 +12,8 @@ public class UserAuthRepo extends BaseRepository<UserAuth> {
         return INSTANCE;
     }
 
+    // No containsKey check. Saves the authentication record for the given user.
+    // If a key already exists for that user, it will be replaced and password changes
     public void save(String userId, UserAuth auth){
         super.save(userId, auth);
     }

@@ -44,4 +44,9 @@ public class AuthService {
 
         return user;
     }
+
+    public void deleteUser(User user) {
+        userRepo.deleteByEmail(user.getEmail());
+        userAuthRepo.deleteByKey(user.getUserId());
+    }
 }

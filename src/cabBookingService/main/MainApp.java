@@ -28,7 +28,7 @@ public class MainApp {
         AuthController authController = new AuthController(authService,sc);
 
         //service:
-        AdminService adminService = new AdminService(driverRepo, cabRepo, authService);
+        AdminService adminService = new AdminService(driverRepo, cabRepo,rideRepo,userRepo, authService);
         DriverService driverService = new DriverService(rideRepo, driverRepo);
         RiderService riderService = new RiderService(rideRepo, driverRepo, cabRepo);
 

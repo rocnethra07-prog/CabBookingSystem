@@ -67,7 +67,7 @@ public class InputUtil {
     public static Location selectLocation(Scanner sc, String prompt) {
         Location[] locations = Location.values();
         while (true) {
-            System.out.println("  " + prompt);
+            System.out.println(prompt);
             for (int i = 0; i < locations.length; i++) {
                 System.out.printf(i + 1 + ". " + locations[i]);
             }

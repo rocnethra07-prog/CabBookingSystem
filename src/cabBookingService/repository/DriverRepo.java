@@ -18,7 +18,11 @@ public class DriverRepo extends BaseRepository<Driver> {
     }
 
     public void save(Driver driver){
-        super.save(driver.getUserId(), driver);
+        String key = driver.getUserId().trim();
+        if(existsByKey(key)){
+            throw new CabBookingException("Record already exists for key : " + key);
+        }
+        super.save(key, driver);
     }
 
     public List<Driver> findAvailableDrivers(){
@@ -31,6 +35,19 @@ public class DriverRepo extends BaseRepository<Driver> {
         }
         return availableDrivers;
     }
+
+    public List<Driver> findUnavailableDrivers(){
+        List<Driver> unavailableDrivers = new ArrayList<>();
+
+        for(Driver driver : storage.values()){
+            if(!driver.isAvailable()){
+                unavailableDrivers.add(driver);
+            }
+        }
+        return unavailableDrivers;
+    }
+
+
     public boolean existsByLicense(String license){
         if(license == null){
             throw new CabBookingException("License number cannot be null");

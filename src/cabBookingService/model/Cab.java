@@ -66,10 +66,11 @@ public class Cab {
         return Objects.hashCode(registrationNumber);
     }
 
-    public String toString(){
-        return cabId +
-                "\nModel               : " + model +
-                "\nCab Type            : " + cabType +
-                "\nRegistration Number : "+ registrationNumber;
+    @Override
+    public String toString() {
+        return "Cab ID           : " + cabId +
+                "\nModel            : " + model +
+                "\nType             : " + cabType +
+                "\nReg. Number      : " + registrationNumber;
     }
 }

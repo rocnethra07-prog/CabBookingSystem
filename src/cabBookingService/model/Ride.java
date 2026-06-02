@@ -107,11 +107,11 @@ public class Ride {
 
         if((rideStatus == RideStatus.CANCELLED || rideStatus == RideStatus.COMPLETED)
                 && this.rideStatus != RideStatus.BOOKED){
-            throw new IllegalArgumentException("Only booked rides can be completed or cancelled");
+            throw new CabBookingException("Only booked rides can be completed or cancelled");
         }
 
         if(rideStatus == RideStatus.BOOKED && (this.rideStatus == RideStatus.CANCELLED || this.rideStatus == RideStatus.COMPLETED)){
-            throw new IllegalStateException( "Completed or cancelled rides cannot be booked again" );
+            throw new CabBookingException( "Completed or cancelled rides cannot be booked again" );
         }
 
         this.rideStatus = rideStatus;
@@ -137,11 +137,13 @@ public class Ride {
 
     @Override
     public String toString() {
-        return "Ride " + id +
-                "\nPickUp Location : " + pickupLocation +
-                "\nDrop Location   : " + dropLocation +
-                "\nFare            : " + fare +
-                "\nStatus          : " + rideStatus +
-                "\nBooked At       : " + bookedAt.format(DATE_TIME_FORMATTER);
+        return "Ride ID          : " + id +
+                "\nRider ID         : " + riderId +
+                "\nDriver ID        : " + driverId +
+                "\nPickup Location  : " + pickupLocation +
+                "\nDrop Location    : " + dropLocation +
+                "\nFare             : " + fare +
+                "\nStatus           : " + rideStatus +
+                "\nBooked At        : " + bookedAt.format(DATE_TIME_FORMATTER);
     }
 }

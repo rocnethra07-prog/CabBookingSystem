@@ -93,4 +93,13 @@ public class User {
     public int hashCode() {
         return Objects.hashCode(email);
     }
+
+    @Override
+    public String toString() {
+        return "User ID          : " + userId +
+                "\nName             : " + name +
+                "\nPhone            : " + phone +
+                "\nEmail            : " + email +
+                "\nRole             : " + userRole;
+    }
 }
