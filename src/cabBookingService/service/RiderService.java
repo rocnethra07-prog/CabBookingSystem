@@ -72,16 +72,6 @@ public class RiderService {
         return matchingDrivers.get(0);
     }
 
-    private Driver findDriverByCabType(CabType cabType){
-        for(Driver driver : driverRepo.findAvailableDrivers()){
-            Cab cab = cabRepo.findByKey(driver.getCabId());
-
-            if(cab != null && cab.getCabType() == cabType){
-                return driver;
-            }
-        }
-        return null;
-    }
 
     public Driver getDriverForRide(Ride ride){
         return driverRepo.findByKey(ride.getDriverId());
