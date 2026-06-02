@@ -1,16 +1,10 @@
 package cabBookingService.repository;
 
-
 import cabBookingService.model.User;
 
-import java.util.HashMap;
-import java.util.Map;
+public class UserRepo extends BaseRepository<User> {
 
-//repo for storing all the users
-public class UserRepo {
-
-    private final static UserRepo INSTANCE = new UserRepo() ;
-    private final Map<String, User> usersByEmail = new HashMap<>(); //key: email
+    private static final UserRepo INSTANCE = new UserRepo();
 
     private UserRepo(){}
 
@@ -18,19 +12,18 @@ public class UserRepo {
         return INSTANCE;
     }
 
-    public void save(User user) {
-        usersByEmail.put(user.getEmail(), user);
+    public void save(User user){
+        super.save(user.getEmail().trim().toLowerCase(), user);
     }
 
-    public User findByEmail(String email) {
-        return usersByEmail.get(email.trim().toLowerCase());
+    public User findByEmail(String email){
+        return findByKey(email.trim().toLowerCase());
     }
 
-    public boolean isUserExists(String email) {
+    public boolean existsByEmail(String email){
         if(email == null){
             return false;
         }
-        return usersByEmail.containsKey(email.trim().toLowerCase());
+        return existsByKey(email.trim().toLowerCase());
     }
-
 }

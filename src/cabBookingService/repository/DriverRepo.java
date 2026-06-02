@@ -1,17 +1,15 @@
 package cabBookingService.repository;
 
+import cabBookingService.exception.CabBookingException;
 import cabBookingService.model.Driver;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 //repo for storing only the drivers
-public class DriverRepo {
+public class DriverRepo extends BaseRepository<Driver> {
 
-    private final static DriverRepo INSTANCE = new DriverRepo() ;
-    //key: id
-    private final Map<String, Driver> driversById = new HashMap<>();
-    //to check uniqueness
-    private final Set<String> licenses = new HashSet<>();
+    private static final DriverRepo INSTANCE = new DriverRepo();
 
     private DriverRepo(){}
 
@@ -19,30 +17,30 @@ public class DriverRepo {
         return INSTANCE;
     }
 
-    public void save(Driver driver) {
-        driversById.put(driver.getUserId(), driver);
-        licenses.add(driver.getLicenseNumber());
-    }
-
-    public Driver findById(String driverId) {
-        return driversById.get(driverId);
-    }
-
-    public boolean existsByLicense(String license){
-        if(license == null){
-            return false;
-        }
-        return licenses.contains(license.trim().toUpperCase());
+    public void save(Driver driver){
+        super.save(driver.getUserId(), driver);
     }
 
     public List<Driver> findAvailableDrivers(){
         List<Driver> availableDrivers = new ArrayList<>();
-        for(Driver driver : driversById.values()){
+
+        for(Driver driver : storage.values()){
             if(driver.isAvailable()){
                 availableDrivers.add(driver);
             }
         }
         return availableDrivers;
     }
+    public boolean existsByLicense(String license){
+        if(license == null){
+            throw new CabBookingException("License number cannot be null");
+        }
 
+        for(Driver driver : storage.values()){
+            if(driver.getLicenseNumber().equalsIgnoreCase(license)){
+                return true;
+            }
+        }
+        return false;
+     }
 }

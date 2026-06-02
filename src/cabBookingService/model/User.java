@@ -1,5 +1,6 @@
 package cabBookingService.model;
 
+import cabBookingService.exception.CabBookingException;
 import cabBookingService.util.IdGenerator;
 import cabBookingService.util.Validator;
 
@@ -13,32 +14,21 @@ public class User {
     private final UserRole userRole;
 
     public User(String name, String phone, String email,UserRole userRole){
-        if(name == null || name.isBlank()) {
-            throw new IllegalArgumentException("Name cannot be null or blank");
-        }
 
         if(!Validator.isValidName(name)){
-            throw new IllegalArgumentException("Name must contain minimum 3 characters");
-        }
-
-        if(phone == null || phone.isBlank()) {
-            throw new IllegalArgumentException("Phone cannot be null or blank");
+            throw new CabBookingException("Name must contain minimum 3 characters. Name cannot be null or blank");
         }
 
         if(!Validator.isValid10DigitPhone(phone)){
-            throw new IllegalArgumentException("Invalid phone number format");
-        }
-
-        if(email == null || email.isBlank()) {
-            throw new IllegalArgumentException("Email cannot be null or blank");
+            throw new CabBookingException("Invalid phone number format. Phone cannot be null or blank");
         }
 
         if(!Validator.isValidEmail(email)){
-            throw new IllegalArgumentException("Invalid email format");
+            throw new CabBookingException("Invalid email format. Email cannot be null or blank");
         }
 
         if(userRole == null) {
-            throw new IllegalArgumentException("User role cannot be null");
+            throw new CabBookingException("User role cannot be null");
         }
 
         this.userId = IdGenerator.generateUserId();
@@ -57,13 +47,9 @@ public class User {
     }
 
     public void setName(String name){
-        if(name == null || name.isBlank()) {
-            throw new IllegalArgumentException("Name cannot be null or blank");
-
-        }
 
         if (!Validator.isValidName(name)){
-            throw new IllegalArgumentException("Name must contain minimum 3 characters");
+            throw new CabBookingException("Name must contain minimum 3 characters. Name cannot be null or blank");
         }
 
         this.name = name.trim();
@@ -74,12 +60,9 @@ public class User {
     }
 
     public void setPhone(String phone){
-        if(phone == null || phone.isBlank()) {
-            throw new IllegalArgumentException("Phone cannot be null or blank");
-        }
 
         if(!Validator.isValid10DigitPhone(phone)){
-            throw new IllegalArgumentException("Invalid phone number format");
+            throw new CabBookingException("Invalid phone number format. Phone cannot be null or blank");
         }
 
         this.phone = phone.trim();

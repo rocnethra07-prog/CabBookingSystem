@@ -1,61 +1,70 @@
 package cabBookingService.model;
 
+import cabBookingService.exception.CabBookingException;
 import cabBookingService.util.IdGenerator;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 public class Ride {
     private final String id;
     private final String riderId;
     private final String driverId;
-    private final String pickupLocation;
-    private final String dropLocation;
-    private final double fare;
-    private RideStatus rideStatus; //not final, status will get updated
+    private final Location pickupLocation;
+    private final Location dropLocation;
+    private final BigDecimal fare;
+    private RideStatus rideStatus;
     private final LocalDateTime bookedAt;
 
-    public Ride(String riderId, String driverId, String pickupLocation, String dropLocation, double fare) {
-        if(riderId == null || riderId.isBlank()) {
-            throw new IllegalArgumentException("Rider ID cannot be null or empty");
+    private static final DateTimeFormatter DATE_TIME_FORMATTER =
+            DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+
+    public Ride(String riderId, String driverId, Location pickupLocation, Location dropLocation, BigDecimal fare) {
+
+        if (riderId == null || riderId.isBlank()) {
+            throw new CabBookingException("Rider ID cannot be null or blank");
         }
 
-        if(driverId == null || driverId.isBlank()) {
-            throw new IllegalArgumentException("Driver ID cannot be null or empty");
+        if (driverId == null || driverId.isBlank()) {
+            throw new CabBookingException("Driver ID cannot be null or blank");
         }
 
-        if(pickupLocation == null || pickupLocation.isBlank()) {
-            throw new IllegalArgumentException("Pickup location cannot be null or blank");
+        if (pickupLocation == null) {
+            throw new CabBookingException("Pickup location cannot be null");
         }
 
-        if(dropLocation == null || dropLocation.isBlank()) {
-            throw new IllegalArgumentException("Drop location cannot be null or blank");
+        if (dropLocation == null) {
+            throw new CabBookingException("Drop location cannot be null");
         }
 
-        if(pickupLocation.trim().equalsIgnoreCase(dropLocation.trim())){
-            throw new IllegalArgumentException("Pick Up and Destination cannot be the same");
+        if (pickupLocation == dropLocation) {
+            throw new CabBookingException(
+                    "Pickup and destination locations cannot be the same"
+            );
         }
 
-        if(fare <= 0) {
-            throw new IllegalArgumentException("Fare must be positive");
+        if (fare == null) {
+            throw new CabBookingException("Fare cannot be null");
+        }
+
+        if (fare.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new CabBookingException("Fare must be greater than zero");
         }
 
         this.id = IdGenerator.generateRideId();
         this.riderId = riderId.trim();
         this.driverId = driverId.trim();
-        this.pickupLocation = pickupLocation.trim();
-        this.dropLocation = dropLocation.trim();
+        this.pickupLocation = pickupLocation;
+        this.dropLocation = dropLocation;
         this.fare = fare;
-        this.rideStatus = RideStatus.BOOKED; //ride is booked
+        this.rideStatus = RideStatus.BOOKED;
         this.bookedAt = LocalDateTime.now();
     }
 
     public String getId() {
         return id;
-    }
-
-    public RideStatus getRideStatus(){
-        return rideStatus;
     }
 
     public String getRiderId() {
@@ -66,39 +75,43 @@ public class Ride {
         return driverId;
     }
 
-    public String getPickupLocation() {
+    public Location getPickupLocation() {
         return pickupLocation;
+    }
+
+    public Location getDropLocation() {
+        return dropLocation;
+    }
+
+    public BigDecimal getFare() {
+        return fare;
+    }
+
+    public RideStatus getRideStatus() {
+        return rideStatus;
     }
 
     public LocalDateTime getBookedAt() {
         return bookedAt;
     }
 
-    public String getDropLocation() {
-        return dropLocation;
-    }
-
-    public double getFare() {
-        return fare;
-    }
-
     public void setRideStatus(RideStatus rideStatus) {
-        if(rideStatus == null){
-            throw new IllegalArgumentException("Ride status cannot be null");
+
+        if (rideStatus == null) {
+            throw new CabBookingException("Ride status cannot be null.");
+        }
+        //no update needed
+        if(this.rideStatus != null && this.rideStatus == rideStatus){
+            return;
         }
 
-        if(rideStatus == RideStatus.CANCELLED && this.rideStatus != RideStatus.BOOKED){
-            throw new IllegalArgumentException("Only booked rides can be cancelled");
-        }
-
-        if(rideStatus == RideStatus.COMPLETED && this.rideStatus != RideStatus.BOOKED){
-           throw  new IllegalArgumentException("Only booked rides can be completed");
+        if((rideStatus == RideStatus.CANCELLED || rideStatus == RideStatus.COMPLETED)
+                && this.rideStatus != RideStatus.BOOKED){
+            throw new IllegalArgumentException("Only booked rides can be completed or cancelled");
         }
 
         if(rideStatus == RideStatus.BOOKED && (this.rideStatus == RideStatus.CANCELLED || this.rideStatus == RideStatus.COMPLETED)){
-            throw new IllegalStateException(
-                    "Completed or cancelled rides cannot be booked again"
-            );
+            throw new IllegalStateException( "Completed or cancelled rides cannot be booked again" );
         }
 
         this.rideStatus = rideStatus;
@@ -106,15 +119,29 @@ public class Ride {
 
     @Override
     public boolean equals(Object object) {
-        if(this == object) {
+        if (this == object) {
             return true;
         }
-        if (!(object instanceof Ride ride)) return false;
+
+        if (!(object instanceof Ride ride)) {
+            return false;
+        }
+
         return Objects.equals(id, ride.id);
     }
 
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Ride " + id +
+                "\nPickUp Location : " + pickupLocation +
+                "\nDrop Location   : " + dropLocation +
+                "\nFare            : " + fare +
+                "\nStatus          : " + rideStatus +
+                "\nBooked At       : " + bookedAt.format(DATE_TIME_FORMATTER);
     }
 }

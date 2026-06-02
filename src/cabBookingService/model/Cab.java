@@ -1,5 +1,6 @@
 package cabBookingService.model;
 
+import cabBookingService.exception.CabBookingException;
 import cabBookingService.util.IdGenerator;
 
 import java.util.Objects;
@@ -16,16 +17,17 @@ public class Cab {
 //    private final String driverId; //reference of the driver who owns this cab
 
     public Cab(String registrationNumber, String model, CabType cabType) {
-        if(registrationNumber == null || registrationNumber.isBlank()) {
-            throw new IllegalArgumentException("Registration number cannot be null or blank");
+
+        if (registrationNumber == null || registrationNumber.isBlank()) {
+            throw new CabBookingException("Registration number cannot be null or blank.");
         }
 
-        if(model == null || model.isBlank()) {
-            throw new IllegalArgumentException("Model cannot be null or blank");
+        if (model == null || model.isBlank()) {
+            throw new CabBookingException("Car model cannot be null or blank.");
         }
 
-        if(cabType == null) {
-            throw new IllegalArgumentException("Cab type cannot be null");
+        if (cabType == null) {
+            throw new CabBookingException("Cab type cannot be null.");
         }
 
         this.cabId = IdGenerator.generateCabId();
@@ -62,5 +64,12 @@ public class Cab {
     @Override
     public int hashCode() {
         return Objects.hashCode(registrationNumber);
+    }
+
+    public String toString(){
+        return cabId +
+                "\nModel               : " + model +
+                "\nCab Type            : " + cabType +
+                "\nRegistration Number : "+ registrationNumber;
     }
 }

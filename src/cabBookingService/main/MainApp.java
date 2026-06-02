@@ -1,17 +1,11 @@
 package cabBookingService.main;
 
-import cabBookingService.controller.AdminController;
-import cabBookingService.controller.AuthController;
-import cabBookingService.controller.DriverController;
+import cabBookingService.controller.*;
+import cabBookingService.exception.CabBookingException;
 import cabBookingService.model.User;
-import cabBookingService.repository.CabRepo;
-import cabBookingService.repository.DriverRepo;
-import cabBookingService.repository.UserAuthRepo;
-import cabBookingService.repository.UserRepo;
-import cabBookingService.service.AdminService;
-import cabBookingService.service.AuthService;
+import cabBookingService.repository.*;
+import cabBookingService.service.*;
 import cabBookingService.config.AdminSeeder;
-import cabBookingService.service.DriverService;
 import cabBookingService.util.MenuHandler;
 
 import java.util.Scanner;
@@ -27,21 +21,24 @@ public class MainApp {
         UserAuthRepo userAuthRepo = UserAuthRepo.getInstance();
         DriverRepo driverRepo = DriverRepo.getInstance();
         CabRepo cabRepo = CabRepo.getInstance();
+        RideRepo rideRepo = RideRepo.getInstance();
 
         //auth:
         AuthService authService = new AuthService(userRepo, userAuthRepo);
         AuthController authController = new AuthController(authService,sc);
 
         //service:
-        AdminService adminService = new AdminService(userRepo, userAuthRepo, driverRepo, cabRepo);
-        DriverService driverService = new DriverService();
+        AdminService adminService = new AdminService(driverRepo, cabRepo, authService);
+        DriverService driverService = new DriverService(rideRepo, driverRepo);
+        RiderService riderService = new RiderService(rideRepo, driverRepo, cabRepo);
 
         //controller:
         AdminController adminController = new AdminController(adminService, sc);
         DriverController driverController = new DriverController(driverService, sc);
+        RiderController riderController = new RiderController(riderService, sc);
 
         //menu handler:
-        MenuHandler menuHandler = new MenuHandler(adminController, driverController);
+        MenuHandler menuHandler = new MenuHandler(adminController, driverController, riderController, driverService);
 
         //admin seed:
         AdminSeeder.seed(authService);
@@ -59,17 +56,27 @@ public class MainApp {
             String choice = sc.nextLine().trim();
             switch (choice) {
                 case "1":
-                    handleSession(authController.login(),menuHandler);
+                    try {
+                        handleSession(authController.login(), menuHandler);
+                    }
+                    catch (CabBookingException e){
+                        System.out.println("[!] " + e.getMessage());
+                    }
                     break;
                 case "2":
-//                    handleSession(authController.registerRider(),menuHandler);
+                    try {
+                        handleSession(authController.registerRider(), menuHandler);
+                    }
+                    catch (CabBookingException e){
+                        System.out.println("[!] " + e.getMessage());
+                    }
                     break;
                 case "0":
-                    System.out.println("App exiting");
+                    System.out.println("Goodbye! See you next ride.");
                     running = false;
                     break;
                 default:
-                    System.out.println("Invalid choice. Please try again.");
+                    System.out.println("Invalid choice. Enter 1, 2 or 0.");
             }
         }
         sc.close();

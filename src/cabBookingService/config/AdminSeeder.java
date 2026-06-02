@@ -1,8 +1,10 @@
 package cabBookingService.config;
 
-import cabBookingService.model.User;
 import cabBookingService.model.UserRole;
 import cabBookingService.service.AuthService;
+
+//Seeds the default admin account on first startup.
+//Hardcoded here only for this in-memory demo.
 
 public class AdminSeeder {
 
@@ -16,10 +18,8 @@ public class AdminSeeder {
     public static void seed(AuthService authService){
         if(!authService.isUserExists(ADMIN_EMAIL)) {
             authService.registerUser(
-                    ADMIN_NAME,
-                    ADMIN_PHONE,
-                    ADMIN_EMAIL,
-                    ADMIN_PASSWORD,
+                    ADMIN_NAME, ADMIN_PHONE,
+                    ADMIN_EMAIL, ADMIN_PASSWORD,
                     UserRole.ADMIN
             );
         }

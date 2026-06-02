@@ -1,30 +1,34 @@
 package cabBookingService.model;
 
+import cabBookingService.exception.CabBookingException;
+
+import java.math.BigDecimal;
+
 //driver details
 public class Driver extends User{
 
     private final String cabId;
     private final String licenseNumber;
-    private String currentLocation;
-    private double earnings;
+    private Location currentLocation;
+    private BigDecimal earnings;
     private boolean isAvailable;
 
-    public Driver(String name, String phone,String email,String currentLocation, String licenseNumber, String cabId){
+    public Driver(String name, String phone,String email,Location currentLocation, String licenseNumber, String cabId){
         super(name, phone, email, UserRole.DRIVER);
-        if(currentLocation == null || currentLocation.isBlank()) {
-            throw new IllegalArgumentException("Location cannot be null or blank");
+        if(currentLocation == null ) {
+            throw new CabBookingException("Location cannot be null");
         }
 
         if(licenseNumber == null || licenseNumber.isBlank()) {
-            throw new IllegalArgumentException("License number cannot be null or blank");
+            throw new CabBookingException("License number cannot be null or blank");
         }
 
         if(cabId == null || cabId.isBlank()) {
-            throw new IllegalArgumentException("Cab ID cannot be null or blank");
+            throw new CabBookingException("Cab ID cannot be null or blank");
         }
-        this.currentLocation = currentLocation.trim();
+        this.currentLocation = currentLocation;
         this.licenseNumber = licenseNumber.trim().toUpperCase();
-        this.earnings = 0.0;
+        this.earnings = BigDecimal.ZERO;
         this.isAvailable = true;
         this.cabId = cabId.trim();
     }
@@ -33,11 +37,11 @@ public class Driver extends User{
         return cabId;
     }
 
-    public String getCurrentLocation() {
+    public Location getCurrentLocation() {
         return currentLocation;
     }
 
-    public double getEarnings() {
+    public BigDecimal getEarnings() {
         return earnings;
     }
 
@@ -49,23 +53,48 @@ public class Driver extends User{
         return licenseNumber;
     }
 
-    public void setCurrentLocation(String location){
-        if(location == null || location.isBlank()) {
-            throw new IllegalArgumentException("Location cannot be null or blank");
+    public void setCurrentLocation(Location location){
+
+        if(location == null ) {
+            throw new CabBookingException("Location cannot be null");
         }
-        this.currentLocation = location.trim();
+
+        //No update required
+        if (this.currentLocation != null && this.currentLocation == location){
+            return;
+        }
+
+        this.currentLocation = location;
     }
 
     public void setAvailable(boolean available) {
+        // No update needed
+        if (this.isAvailable == available) {
+            return;
+        }
+
         this.isAvailable = available;
     }
 
-    public void addEarnings(double amount){
-        if(amount <= 0){
-            throw new IllegalArgumentException("Amount cannot be 0 or negative.");
+    public void addEarnings(BigDecimal amount){
+        if (amount == null) {
+            throw new CabBookingException("Amount cannot be null");
         }
-        this.earnings += amount;
+
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new CabBookingException("Amount must be greater than zero");
+        }
+
+        this.earnings = this.earnings.add(amount);
     }
 
-    //no equals check, inherits user class equals()
+    @Override
+    public String toString() {
+        return "Driver " + getUserId() +
+                "\nCab Id           : " + cabId +
+                "\nCurrent Location : " + currentLocation +
+                "\nAvailability     : " + ((isAvailable) ? "YES" : "NO") +
+                "\nLicense Number   : " + licenseNumber +
+                "\nEarnings         : " + earnings;
+    }
 }

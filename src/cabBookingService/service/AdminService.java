@@ -1,26 +1,22 @@
 package cabBookingService.service;
 
-import cabBookingService.auth.UserAuth;
-import cabBookingService.model.Cab;
-import cabBookingService.model.CabType;
-import cabBookingService.model.Driver;
+import cabBookingService.builder.DriverRegistrationData;
+import cabBookingService.model.*;
 import cabBookingService.repository.*;
 
 public class AdminService {
-    private final UserRepo userRepo;
-    private final UserAuthRepo userAuthRepo;
     private final DriverRepo driverRepo;
     private final CabRepo cabRepo;
+    private final AuthService authService;
 
-    public AdminService(UserRepo userRepo, UserAuthRepo userAuthRepo, DriverRepo driverRepo, CabRepo cabRepo) {
-        this.userRepo = userRepo;
-        this.userAuthRepo = userAuthRepo;
+    public AdminService(DriverRepo driverRepo, CabRepo cabRepo,AuthService authService) {
+        this.authService = authService;
         this.driverRepo = driverRepo;
         this.cabRepo = cabRepo;
     }
 
     public boolean isUserExists(String email){
-        return userRepo.isUserExists(email);
+        return authService.isUserExists(email);
     }
 
     public boolean isLicenseNumberExists(String license){
@@ -31,22 +27,38 @@ public class AdminService {
         return cabRepo.existsByRegNumber(registration);
     }
 
-    public Driver addDriver(String name,String phone, String email, String password, String currentLocation, String licenseNumber, String model, String registrationNumber, CabType cabType ){
+    public Driver addDriver(DriverRegistrationData driverBuilder){
 
-        if(isUserExists(email) || isLicenseNumberExists(licenseNumber)
-                || isRegistrationNumExists(registrationNumber)){
+        if(isUserExists(driverBuilder.getEmail())
+                || isLicenseNumberExists(driverBuilder.getLicenseNumber())
+                || isRegistrationNumExists(driverBuilder.getRegistrationNumber())){
             return null;
         }
-        Cab cab = new Cab(registrationNumber, model, cabType);
-        Driver driver = new Driver(name, phone, email, currentLocation,licenseNumber, cab.getCabId());
 
-        driverRepo.save(driver);
-        userRepo.save(driver);
-        userAuthRepo.save(driver.getUserId(), new UserAuth(password));
+        Cab cab = new Cab(
+                driverBuilder.getRegistrationNumber(),
+                driverBuilder.getModel(),
+                driverBuilder.getCabType()
+        );
+
+        Driver driver = new Driver(
+                driverBuilder.getName(),
+                driverBuilder.getPhone(),
+                driverBuilder.getEmail(),
+                driverBuilder.getCurrentLocation(),
+                driverBuilder.getLicenseNumber(),
+                cab.getCabId()
+        );
+
         cabRepo.save(cab);
+        driverRepo.save(driver);
+        authService.registerUser(driverBuilder.getName(),
+                driverBuilder.getPhone(),
+                driverBuilder.getEmail(),
+                driverBuilder.getPassword(),
+                UserRole.DRIVER);
 
         return driver;
     }
-
 
 }

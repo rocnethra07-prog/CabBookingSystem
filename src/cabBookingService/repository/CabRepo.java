@@ -1,5 +1,6 @@
 package cabBookingService.repository;
 
+import cabBookingService.exception.CabBookingException;
 import cabBookingService.model.Cab;
 
 import java.util.HashMap;
@@ -7,15 +8,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class CabRepo {
+public class CabRepo extends BaseRepository<Cab>{
 
     private final static CabRepo INSTANCE = new CabRepo() ;
 
-    //key: id
-    private final Map<String, Cab> cabsById = new HashMap<>();
-
-    //to check uniqueness
-    private final Set<String> registrationNumberSet = new HashSet<>();
     private CabRepo(){}
 
     public static CabRepo getInstance(){
@@ -23,19 +19,20 @@ public class CabRepo {
     }
 
     public void save(Cab cab) {
-        cabsById.put(cab.getCabId(), cab);
-        registrationNumberSet.add(cab.getRegistrationNumber());
+        super.save(cab.getCabId(), cab);
     }
 
     public boolean existsByRegNumber(String regNumber) {
         if(regNumber == null){
-            return false;
+            throw new CabBookingException("Registration number cannot be null");
         }
-        return registrationNumberSet.contains(regNumber.trim().toUpperCase());
-    }
 
-    public Cab findById(String id){
-        return cabsById.get(id);
+        for(Cab cab : storage.values()){
+            if(cab.getRegistrationNumber().equalsIgnoreCase(regNumber)){
+                return true;
+            }
+        }
+        return false;
     }
 
 }

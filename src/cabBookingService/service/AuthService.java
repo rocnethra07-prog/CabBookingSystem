@@ -1,6 +1,7 @@
 package cabBookingService.service;
 
 import cabBookingService.auth.UserAuth;
+import cabBookingService.exception.CabBookingException;
 import cabBookingService.model.User;
 import cabBookingService.model.UserRole;
 import cabBookingService.repository.UserAuthRepo;
@@ -16,14 +17,13 @@ public class AuthService {
     }
 
     public boolean isUserExists(String email){
-        return userRepo.isUserExists(email);
+        return userRepo.existsByEmail(email);
     }
 
     public User registerUser(String name, String phone, String email, String password, UserRole userRole){
-        if(isUserExists(email)){
-            return null;
+        if (isUserExists(email)) {
+            throw new CabBookingException("An account with this email already exists.");
         }
-
         User user = new User(name, phone, email, userRole);
         userRepo.save(user);
         userAuthRepo.save(user.getUserId(),new UserAuth(password));
@@ -35,11 +35,11 @@ public class AuthService {
         User user = userRepo.findByEmail(email);
 
         if(user == null){
-            return null;
+            throw new CabBookingException("Account does not exist. Please register.");
         }
 
         if(!userAuthRepo.validateCredentials(user.getUserId(), password)){
-            return null;
+            throw new CabBookingException("Invalid credentials.");
         }
 
         return user;

@@ -1,8 +1,10 @@
 package cabBookingService.controller;
 
+import cabBookingService.builder.DriverRegistrationData;
+import cabBookingService.exception.CabBookingException;
 import cabBookingService.model.CabType;
 import cabBookingService.model.Driver;
-import cabBookingService.model.User;
+import cabBookingService.model.Location;
 import cabBookingService.service.AdminService;
 import cabBookingService.util.InputUtil;
 
@@ -23,6 +25,9 @@ public class AdminController {
         boolean back = false;
         while (!back) {
             System.out.println("1. Add Driver");
+            System.out.println("2. Delete Driver");
+            System.out.println("3. View All Drivers");
+            System.out.println("4. View All Rides");
             System.out.println("0. Back");
 
             System.out.print("Choose: ");
@@ -56,15 +61,14 @@ public class AdminController {
              if(!adminService.isUserExists(email)){
                  break;
              }
-            System.out.println("User email already exists. Enter a valid email.");
+            System.out.println("This email is already registered.");
         }
 
         String password = InputUtil.getPassword(sc, "Enter password: ", "Password must be at least 8 characters, with an uppercase letter, a lowercase letter, and a special character. Spaces are not allowed.");
 
-        String currentLocation = InputUtil.getNonEmptyInput(sc, "Enter current location: " , "Location cannot be empty");
+        Location currentLocation = InputUtil.selectLocation(sc, "Enter current location: ");
 
-
-        //for now checking if license and registration number is not empty only
+        //for now, checking if license and registration number is not empty only
         String licenseNumber;
         while(true){
             licenseNumber = InputUtil.getNonEmptyInput(sc, "Enter license number: ", "License number cannot be empty");
@@ -87,22 +91,33 @@ public class AdminController {
 
         CabType cabType = InputUtil.selectCabType(sc);
 
-        Driver driver = adminService.addDriver(
-                name, phone, email, password,
-                currentLocation,
-                licenseNumber,
-                model,
-                registrationNumber,
-                cabType
-        );
+        try {
+            DriverRegistrationData request =
+                    new DriverRegistrationData.Builder()
+                            .name(name)
+                            .phone(phone)
+                            .email(email)
+                            .password(password)
+                            .currentLocation(currentLocation)
+                            .licenseNumber(licenseNumber)
+                            .model(model)
+                            .registrationNumber(registrationNumber)
+                            .cabType(cabType)
+                            .build();
 
-        if(driver == null){
-            System.out.println("This email, license number, or registration number is already registered.");
-            return;
+            Driver driver = adminService.addDriver(request);
+
+            if (driver == null) {
+                System.out.println("This email, license number, or registration number is already registered.");
+                return;
+            }
+            System.out.println("\nDriver added successfully");
+
+            System.out.println("Driver ID : " + driver.getUserId());
         }
-        System.out.println("\nDriver added successfully");
-
-        System.out.println("Driver ID : " +driver.getUserId());
+        catch (CabBookingException e){
+            System.out.println("[!] Failed to add driver " + e.getMessage() );
+        }
     }
 
 }
