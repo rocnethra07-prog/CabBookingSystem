@@ -69,7 +69,7 @@ public class InputUtil {
         while (true) {
             System.out.println(prompt);
             for (int i = 0; i < locations.length; i++) {
-                System.out.printf(i + 1 + ". " + locations[i]);
+                System.out.printf(i + 1 + ". " + locations[i] + "\n");
             }
             System.out.print("  Choice: ");
             String input = sc.nextLine().trim();

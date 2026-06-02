@@ -50,10 +50,7 @@ public class AdminService {
                 data.getCurrentLocation(), data.getLicenseNumber(), cab.getCabId()
         );
 
-        authService.registerUser(
-                data.getName(), data.getPhone(), data.getEmail(),
-                data.getPassword(), UserRole.DRIVER
-        );
+        authService.registerDriverCredentials(driver, data.getPassword());
         cabRepo.save(cab);
         driverRepo.save(driver);
 
