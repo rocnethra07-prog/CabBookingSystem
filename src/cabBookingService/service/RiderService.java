@@ -7,6 +7,7 @@ import cabBookingService.repository.DriverRepo;
 import cabBookingService.repository.RideRepo;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 public class RiderService {
@@ -32,7 +33,7 @@ public class RiderService {
             throw new CabBookingException("You already have an active ride.");
         }
 
-        Driver driver = findDriverByCabType(cabType);
+        Driver driver = findDriver(cabType, pickupLocation);
         if (driver == null) {
             throw new CabBookingException("No " + cabType.name() + " drivers are available right now. Please try a different cab type or try again later.");
         }
@@ -43,6 +44,32 @@ public class RiderService {
         rideRepo.save(ride);
         driver.setAvailable(false);
         return ride;
+    }
+
+    private Driver findDriver(CabType cabType, Location pickupLocation) {
+
+        List<Driver> matchingDrivers = new ArrayList<>();
+
+        for (Driver driver : driverRepo.findAvailableDrivers()) {
+
+            Cab cab = cabRepo.findByKey(driver.getCabId());
+
+            if (cab != null && cab.getCabType() == cabType) {
+                matchingDrivers.add(driver);
+            }
+        }
+
+        if (matchingDrivers.isEmpty()) {
+            return null;
+        }
+
+        for (Driver driver : matchingDrivers) {
+            if (driver.getCurrentLocation() == pickupLocation) {
+                return driver;
+            }
+        }
+
+        return matchingDrivers.get(0);
     }
 
     private Driver findDriverByCabType(CabType cabType){
