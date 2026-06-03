@@ -29,6 +29,7 @@ public class RiderController {
             System.out.println("4. Update profile");
             //have to do change password
             System.out.println("0. Logout");
+            System.out.print("Choose: ");
 
             switch (sc.nextLine().trim()){
                 case "1":
