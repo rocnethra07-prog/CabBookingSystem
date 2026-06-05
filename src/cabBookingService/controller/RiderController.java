@@ -209,7 +209,7 @@ public class RiderController {
 
         if (lastRide.isRated()) {
             System.out.println("\nYour last completed ride is already rated.");
-            System.out.println(lastRide.getId() + " : " + lastRide.getRating() + " / 5");
+            System.out.println(lastRide.getId() + ": " + lastRide.getRating() + " / 5");
             return;
         }
 
