@@ -5,7 +5,6 @@ import cabBookingService.service.AuthService;
 
 //Seeds the default admin account on first startup.
 //Hardcoded here only for this in-memory demo.
-
 public class AdminSeeder {
 
     private static final String ADMIN_EMAIL = "admin@cabbooking.com";
@@ -23,10 +22,5 @@ public class AdminSeeder {
                     UserRole.ADMIN
             );
         }
-
-//        if(u != null){
-//            System.out.println("Admin account initialized: " + ADMIN_EMAIL);
-//        }
     }
 }
-

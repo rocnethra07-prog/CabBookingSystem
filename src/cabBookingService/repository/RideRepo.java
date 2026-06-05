@@ -4,73 +4,88 @@ import cabBookingService.exception.CabBookingException;
 import cabBookingService.model.Ride;
 import cabBookingService.model.RideStatus;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Predicate;
 
 public class RideRepo extends BaseRepository<Ride> {
 
-    private final static RideRepo INSTANCE = new RideRepo();
+    private static final RideRepo INSTANCE = new RideRepo();
 
-    private RideRepo(){}
+    private RideRepo() {}
 
-    public static RideRepo getInstance(){
+    public static RideRepo getInstance() {
         return INSTANCE;
     }
 
-    public void save(Ride ride){
+    public void save(Ride ride) {
         String key = ride.getId().trim();
-        if(existsByKey(key)){
-            throw new CabBookingException("Record already exists for key : " + key);
+        if (existsByKey(key)) {
+            throw new CabBookingException("Record already exists for key: " + key);
         }
         super.save(key, ride);
     }
 
-    public List<Ride> findRidesByRider(String riderId){
-        List<Ride> rides = new ArrayList<>();
+    public List<Ride> findRidesByRider(String riderId) {
+        return findRides(ride -> Objects.equals(ride.getRiderId(), riderId));
+    }
 
-        for(Ride ride : storage.values()){
-            if(ride.getRiderId().equals(riderId)){
+    public List<Ride> findRidesByDriver(String driverId) {
+        return findRides(ride -> Objects.equals(ride.getDriverId(), driverId));
+    }
+
+    public Ride findCurrentRideOfDriver(String driverId) {
+        return findFirstRide(ride -> Objects.equals(ride.getDriverId(), driverId) &&
+                ride.getRideStatus() == RideStatus.BOOKED);
+    }
+
+    public Ride findCurrentRideOfRider(String riderId) {
+        return findFirstRide(ride -> Objects.equals(ride.getRiderId(), riderId) &&
+                        ride.getRideStatus() == RideStatus.BOOKED);
+    }
+
+    public List<Ride> findRidesByStatus(RideStatus status) {
+        if (status == null) {
+            throw new CabBookingException("Ride status cannot be null");
+        }
+        return findRides(ride -> ride.getRideStatus() == status);
+    }
+
+    private List<Ride> findRides(Predicate<Ride> predicate) {
+        List<Ride> rides = new ArrayList<>();
+        for (Ride ride : storage.values()) {
+            if (predicate.test(ride)) {
                 rides.add(ride);
             }
         }
-        return rides;
+        return Collections.unmodifiableList(rides);
     }
 
-    public List<Ride> findRidesByDriver(String driverId){
-        List<Ride> rides = new ArrayList<>();
-
-        for(Ride ride : storage.values()){
-            if(ride.getDriverId().equals(driverId)){
-                rides.add(ride);
-            }
-        }
-        return rides;
-    }
-
-    public Ride findCurrentRideOfDriver(String driverId){
-        for(Ride ride : storage.values()){
-            if(ride.getDriverId().equals(driverId) && ride.getRideStatus() == RideStatus.BOOKED){
+    private Ride findFirstRide(Predicate<Ride> predicate) {
+        for (Ride ride : storage.values()) {
+            if (predicate.test(ride)) {
                 return ride;
             }
         }
         return null;
     }
 
-    public Ride findCurrentRideOfRider(String riderId){
-        for(Ride ride: storage.values()){
-            if(ride.getRiderId().equals(riderId) && ride.getRideStatus() == RideStatus.BOOKED){
-                return ride;
-            }
-        }
-        return null;
-    }
 
-    public List<Ride> findRidesByStatus(RideStatus status){
-        List<Ride> rides = new ArrayList<>();
-        for(Ride ride : storage.values()){
-            if(ride.getRideStatus() == status){
-                rides.add(ride);
+    public Ride findLastCompletedRideByRider(String riderId) {
+        Ride latestRide = null;
+        for (Ride ride : storage.values()) {
+            if (!Objects.equals(ride.getRiderId(), riderId)) {
+                continue;
+            }
+            if (ride.getRideStatus() != RideStatus.COMPLETED) {
+                continue;
+            }
+            if (latestRide == null || ride.getBookedAt().isAfter(latestRide.getBookedAt())) {
+                latestRide = ride;
             }
         }
-        return rides;
+        return latestRide;
     }
 }

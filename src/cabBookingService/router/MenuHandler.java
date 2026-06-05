@@ -1,4 +1,4 @@
-package cabBookingService.util;
+package cabBookingService.router;
 import cabBookingService.controller.AdminController;
 import cabBookingService.controller.DriverController;
 import cabBookingService.controller.RiderController;
@@ -26,7 +26,7 @@ public class MenuHandler {
                 adminController.adminDashBoard();
                 break;
             case DRIVER :
-                // The session holds a User, but DriverController needs a Driver.
+                //The session holds a User, but DriverController needs a Driver.
                 //We resolve the Driver through DriverService.
                 Driver driver = driverService.findDriverById(user.getUserId());
                 if (driver == null) {

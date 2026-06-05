@@ -6,13 +6,13 @@ import cabBookingService.model.User;
 import cabBookingService.repository.*;
 import cabBookingService.service.*;
 import cabBookingService.config.AdminSeeder;
-import cabBookingService.util.MenuHandler;
+import cabBookingService.router.MenuHandler;
 
 import java.util.Scanner;
+import java.util.function.Supplier;
 
 public class MainApp {
     public static void main(String[] args) {
-
         //initialization :
         Scanner sc = new Scanner(System.in);
 
@@ -56,20 +56,10 @@ public class MainApp {
             String choice = sc.nextLine().trim();
             switch (choice) {
                 case "1":
-                    try {
-                        handleSession(authController.login(), menuHandler);
-                    }
-                    catch (CabBookingException e){
-                        System.out.println("[!] " + e.getMessage());
-                    }
+                    handleSession(authController::login, menuHandler);
                     break;
                 case "2":
-                    try {
-                        handleSession(authController.registerRider(), menuHandler);
-                    }
-                    catch (CabBookingException e){
-                        System.out.println("[!] " + e.getMessage());
-                    }
+                    handleSession(authController::registerRider, menuHandler);
                     break;
                 case "0":
                     System.out.println("Goodbye! See you next ride.");
@@ -82,10 +72,15 @@ public class MainApp {
         sc.close();
     }
 
-    private static void handleSession(User user,MenuHandler menuHandler){
-        if(user != null){
-            System.out.println("Welcome " + user.getName() + " !");
-            menuHandler.showMenu(user);
+    private static void handleSession(Supplier<User> action, MenuHandler menuHandler){
+        try {
+            User user = action.get();  // calls login() or registerRider()
+            if (user != null) {
+                System.out.println("Welcome " + user.getName() + " !");
+                menuHandler.showMenu(user);
+            }
+        } catch (CabBookingException e) {
+            System.out.println("[!] " + e.getMessage());
         }
     }
 }

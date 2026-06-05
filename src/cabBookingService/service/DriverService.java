@@ -30,21 +30,27 @@ public class DriverService {
     }
 
     public void completeRide(Ride ride, Driver driver){
-        if(!ride.getDriverId().equals(driver.getUserId())){
-            throw new CabBookingException("Only the assigned driver can complete this ride");
-        }
-
-        ride.setRideStatus(RideStatus.COMPLETED);
+        endRide(ride, driver, RideStatus.COMPLETED);
         driver.addEarnings(ride.getFare());
-        markDriverAsAvailable(driver);
     }
 
     public void cancelRide(Ride ride, Driver driver){
+        endRide(ride, driver, RideStatus.CANCELLED);
+    }
+
+    private void endRide(Ride ride, Driver driver, RideStatus rideStatus){
         if(!ride.getDriverId().equals(driver.getUserId())){
-            throw new CabBookingException("Only the assigned driver can cancel this ride");
+            throw new CabBookingException("Only the assigned driver can end this ride");
         }
 
-        ride.setRideStatus(RideStatus.CANCELLED);
+        if (ride.getRideStatus() == RideStatus.CANCELLED || ride.getRideStatus() == RideStatus.COMPLETED) {
+            throw new CabBookingException("Ride is already " + ride.getRideStatus());
+        }
+
+        if (ride.getRideStatus() != RideStatus.BOOKED) {
+            throw new CabBookingException("Ride status must be BOOKED to end it");
+        }
+        ride.setRideStatus(rideStatus);
         markDriverAsAvailable(driver);
     }
 

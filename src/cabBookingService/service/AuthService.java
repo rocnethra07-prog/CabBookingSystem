@@ -26,9 +26,7 @@ public class AuthService {
             throw new CabBookingException("An account with this email already exists.");
         }
         User user = new User(name, phone, email, userRole);
-
         saveUserCredentials(user, password);
-
         return user;
     }
 
@@ -36,7 +34,6 @@ public class AuthService {
         if (isUserExists(user.getEmail())) {
             throw new CabBookingException("An account with this email already exists.");
         }
-
         saveUserCredentials(user, password);
     }
 

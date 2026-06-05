@@ -12,6 +12,8 @@ public class Driver extends User{
     private Location currentLocation;
     private BigDecimal earnings;
     private boolean isAvailable;
+    private int totalRatingSum;   // sum of all ratings received
+    private int ratingCount;
 
     public Driver(String name, String phone,String email,Location currentLocation, String licenseNumber, String cabId){
         super(name, phone, email, UserRole.DRIVER);
@@ -31,6 +33,8 @@ public class Driver extends User{
         this.earnings = BigDecimal.ZERO;
         this.isAvailable = true;
         this.cabId = cabId.trim();
+        this.totalRatingSum = 0;
+        this.ratingCount = 0;
     }
 
     public String getCabId() {
@@ -88,6 +92,22 @@ public class Driver extends User{
         this.earnings = this.earnings.add(amount);
     }
 
+    public void addRating(int rating) {
+        if (rating < 1 || rating > 5) {
+            throw new CabBookingException("Rating must be between 1 and 5.");
+        }
+        this.totalRatingSum += rating;
+        this.ratingCount++;
+    }
+
+    public int getTotalRatingSum() {
+        return totalRatingSum;
+    }
+
+    public int getRatingCount() {
+        return ratingCount;
+    }
+
     @Override
     public String toString() {
         return super.toString() +
@@ -95,6 +115,7 @@ public class Driver extends User{
                 "\nLocation         : " + currentLocation +
                 "\nAvailability     : " + (isAvailable ? "AVAILABLE" : "BUSY") +
                 "\nTotal Earnings   : " + earnings +
-                "\nCab ID           : " + cabId;
+                "\nCab ID           : " + cabId +
+                "\nRatings Received : " + ratingCount;
     }
 }

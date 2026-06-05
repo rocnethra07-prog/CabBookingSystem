@@ -4,7 +4,9 @@ import cabBookingService.exception.CabBookingException;
 import cabBookingService.model.Driver;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
 
 //repo for storing only the drivers
 public class DriverRepo extends BaseRepository<Driver> {
@@ -24,33 +26,30 @@ public class DriverRepo extends BaseRepository<Driver> {
         }
         super.save(key, driver);
     }
-
-    public List<Driver> findAvailableDrivers(){
-        List<Driver> availableDrivers = new ArrayList<>();
-
-        for(Driver driver : storage.values()){
-            if(driver.isAvailable()){
-                availableDrivers.add(driver);
-            }
-        }
-        return availableDrivers;
+    public List<Driver> findAvailableDrivers() {
+        return findDrivers(Driver::isAvailable);
     }
 
-    public List<Driver> findUnavailableDrivers(){
-        List<Driver> unavailableDrivers = new ArrayList<>();
+    public List<Driver> findUnavailableDrivers() {
+        return findDrivers(driver -> !driver.isAvailable());
+    }
 
-        for(Driver driver : storage.values()){
-            if(!driver.isAvailable()){
-                unavailableDrivers.add(driver);
+    private List<Driver> findDrivers(Predicate<Driver> condition) {
+        List<Driver> result = new ArrayList<>();
+
+        for (Driver driver : storage.values()) {
+            if (condition.test(driver)) {
+                result.add(driver);
             }
         }
-        return unavailableDrivers;
+
+        return Collections.unmodifiableList(result);
     }
 
 
     public boolean existsByLicense(String license){
-        if(license == null){
-            throw new CabBookingException("License number cannot be null");
+        if(license == null || license.isBlank()){
+            throw new CabBookingException("License number cannot be null or blank");
         }
 
         for(Driver driver : storage.values()){

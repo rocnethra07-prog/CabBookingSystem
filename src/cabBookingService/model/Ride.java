@@ -17,6 +17,10 @@ public class Ride {
     private final BigDecimal fare;
     private RideStatus rideStatus;
     private final LocalDateTime bookedAt;
+    private LocalDateTime completedAt;
+    private LocalDateTime cancelledAt;
+
+    private Integer rating; // 1–5, null if not yet rated
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER =
             DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
@@ -61,6 +65,9 @@ public class Ride {
         this.fare = fare;
         this.rideStatus = RideStatus.BOOKED;
         this.bookedAt = LocalDateTime.now();
+        this.rating = null;
+        this.cancelledAt = null;
+        this.completedAt = null;
     }
 
     public String getId() {
@@ -114,9 +121,45 @@ public class Ride {
             throw new CabBookingException( "Completed or cancelled rides cannot be booked again" );
         }
 
+        if (rideStatus == RideStatus.COMPLETED) {
+            this.completedAt = LocalDateTime.now();
+        }
+
+        if (rideStatus == RideStatus.CANCELLED) {
+            this.cancelledAt = LocalDateTime.now();
+        }
+
         this.rideStatus = rideStatus;
     }
 
+    public Integer getRating() {
+        return rating;
+    }
+
+    public boolean isRated() {
+        return rating != null;
+    }
+
+    public LocalDateTime getCompletedAt() {
+        return completedAt;
+    }
+
+    public LocalDateTime getCancelledAt() {
+        return cancelledAt;
+    }
+
+    public void setRating(int rating) {
+        if (this.rideStatus != RideStatus.COMPLETED) {
+            throw new CabBookingException("You can only rate a completed ride.");
+        }
+        if (this.rating != null) {
+            throw new CabBookingException("This ride has already been rated.");
+        }
+        if (rating < 1 || rating > 5) {
+            throw new CabBookingException("Rating must be between 1 and 5.");
+        }
+        this.rating = rating;
+    }
     @Override
     public boolean equals(Object object) {
         if (this == object) {
@@ -137,7 +180,7 @@ public class Ride {
 
     @Override
     public String toString() {
-        return "Ride ID          : " + id +
+        String str = "Ride ID          : " + id +
                 "\nRider ID         : " + riderId +
                 "\nDriver ID        : " + driverId +
                 "\nPickup Location  : " + pickupLocation +
@@ -145,5 +188,14 @@ public class Ride {
                 "\nFare             : " + fare +
                 "\nStatus           : " + rideStatus +
                 "\nBooked At        : " + bookedAt.format(DATE_TIME_FORMATTER);
+        if (completedAt != null) {
+            str += "\nCompleted At     : " + completedAt.format(DATE_TIME_FORMATTER);
+        }
+
+        if (cancelledAt != null) {
+            str += "\nCancelled At     : " + cancelledAt.format(DATE_TIME_FORMATTER);
+        }
+
+        return str;
     }
 }

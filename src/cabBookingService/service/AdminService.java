@@ -38,12 +38,6 @@ public class AdminService {
     // ─── Driver Management
 
     public Driver addDriver(DriverRegistrationData data) {
-        if (isUserExists(data.getEmail())
-                || isLicenseNumberExists(data.getLicenseNumber())
-                || isRegistrationNumExists(data.getRegistrationNumber())) {
-            throw new CabBookingException("Email, license, or registration number already registered");
-        }
-
         Cab cab = new Cab(data.getRegistrationNumber(), data.getModel(), data.getCabType());
         Driver driver = new Driver(
                 data.getName(), data.getPhone(), data.getEmail(),
@@ -128,5 +122,14 @@ public class AdminService {
     public List<Ride> getCancelledRides() {
         return getRidesByStatus(RideStatus.CANCELLED);
     }
+
+    public List<Cab> getAllCabs() {
+        return cabRepo.findAll();
+    }
+
+    public List<Cab> getCabsByType(CabType cabType) {
+        return cabRepo.findCabsByCabType(cabType);
+    }
+
 
 }

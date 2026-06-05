@@ -5,6 +5,7 @@ import cabBookingService.model.User;
 import cabBookingService.model.UserRole;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class UserRepo extends BaseRepository<User> {
@@ -26,17 +27,23 @@ public class UserRepo extends BaseRepository<User> {
     }
 
     public User findByEmail(String email){
+        if(email == null || email.isBlank()){
+            throw new CabBookingException("Email cannot be null or blank");
+        }
         return findByKey(email.trim().toLowerCase());
     }
 
     public boolean existsByEmail(String email){
-        if(email == null){
+        if(email == null || email.isBlank()){
             return false;
         }
         return existsByKey(email.trim().toLowerCase());
     }
 
     public void deleteByEmail(String email) {
+        if(email == null || email.isBlank()){
+            throw new CabBookingException("Email cannot be null or blank");
+        }
         deleteByKey(email.trim().toLowerCase());
     }
 
@@ -47,6 +54,6 @@ public class UserRepo extends BaseRepository<User> {
                 riders.add(user);
             }
         }
-        return riders;
+        return Collections.unmodifiableList(riders);
     }
 }

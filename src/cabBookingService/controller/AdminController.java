@@ -43,7 +43,7 @@ public class AdminController {
                     rideManagementMenu();
                     break;
                 case "4":
-                    //cab management isn't yet implemented;
+                    cabManagementMenu();
                     break;
                 case "0":
                     back = true;
@@ -107,6 +107,7 @@ public class AdminController {
 
         String phone = InputUtil.getPhone(sc, "  Phone  : ", "Enter a valid 10-digit phone number.");
 
+        //checking existence check in controller for better user experience on input.
         String email;
         while (true) {
             email = InputUtil.getEmail(sc, "  Email  : ", "Invalid email. Enter a valid email.");
@@ -133,10 +134,10 @@ public class AdminController {
         while (true) {
             registrationNumber = InputUtil.getNonEmptyInput(sc, "  Reg. No.   : ", "Registration number cannot be empty.");
             if (!adminService.isRegistrationNumExists(registrationNumber)) break;
-            System.out.println("[!]Registration number already exists.");
+            System.out.println("[!] Registration number already exists.");
         }
 
-        CabType cabType = InputUtil.selectCabType(sc);
+        CabType cabType = InputUtil.selectCabType(sc, "Enter Cab Type: ");
 
         try {
             DriverRegistrationData request = new DriverRegistrationData.Builder()
@@ -152,11 +153,6 @@ public class AdminController {
                     .build();
 
             Driver driver = adminService.addDriver(request);
-
-            if (driver == null) {
-                System.out.println("[!] Failed: email, license, or registration number already registered.");
-                return;
-            }
 
             System.out.println("\n  Driver added successfully!");
 
@@ -235,13 +231,7 @@ public class AdminController {
 
     private void searchDriverById() {
         System.out.println("\n--- SEARCH DRIVER BY ID ---");
-        System.out.print("  Enter Driver ID: ");
-        String driverId = sc.nextLine().trim();
-
-        if (driverId.isEmpty()) {
-            System.out.println("[!] Driver ID cannot be empty.");
-            return;
-        }
+        String driverId = InputUtil.getNonEmptyInput(sc, "  Enter Driver ID: ", "Driver ID cannot be empty.");
 
         try {
             Driver driver = adminService.findDriverById(driverId);
@@ -258,13 +248,7 @@ public class AdminController {
 
     private void viewDriverRideHistory() {
         System.out.println("\n--- DRIVER RIDE HISTORY ---");
-        System.out.print("  Enter Driver ID: ");
-        String driverId = sc.nextLine().trim();
-
-        if (driverId.isEmpty()) {
-            System.out.println("[!] Driver ID cannot be empty.");
-            return;
-        }
+        String driverId = InputUtil.getNonEmptyInput(sc, "  Enter Driver ID: ", "Driver ID cannot be empty.");
 
         try {
             Driver driver = adminService.findDriverById(driverId);
@@ -320,14 +304,7 @@ public class AdminController {
 
     private void viewRiderRideHistory() {
         System.out.println("\n--- RIDER RIDE HISTORY ---");
-        System.out.print("  Enter Rider ID: ");
-        String riderId = sc.nextLine().trim();
-
-        if (riderId.isEmpty()) {
-            System.out.println("[!] Rider ID cannot be empty.");
-            return;
-        }
-
+        String riderId = InputUtil.getNonEmptyInput(sc, "  Enter Rider ID: ", "Rider ID cannot be empty.");
         try {
             List<Ride> rides = adminService.getRidesForRider(riderId);
             if (rides.isEmpty()) {
@@ -380,6 +357,12 @@ public class AdminController {
 
     private void viewAllRides() {
         List<Ride> rides = adminService.getAllRides();
+
+        if (rides.isEmpty()) {
+            System.out.println("\n  No rides in history yet.");
+            return;
+        }
+
         System.out.println("\n--- ALL RIDES (" + rides.size() + ") ---");
         for (Ride ride : rides){
             System.out.println(ride);
@@ -389,6 +372,12 @@ public class AdminController {
 
     private void viewActiveRides() {
         List<Ride> rides = adminService.getActiveRides();
+
+        if (rides.isEmpty()) {
+            System.out.println("\n  No active rides right now.");
+            return;
+        }
+
         System.out.println("\n--- ACTIVE RIDES (" + rides.size() + ") ---");
         for (Ride ride : rides){
             System.out.println(ride);
@@ -398,6 +387,12 @@ public class AdminController {
 
     private void viewCompletedRides() {
         List<Ride> rides = adminService.getCompletedRides();
+
+        if (rides.isEmpty()) {
+            System.out.println("\n  No completed rides in history yet.");
+            return;
+        }
+
         System.out.println("\n--- COMPLETED RIDES (" + rides.size() + ") ---");
         for (Ride ride : rides){
             System.out.println(ride);
@@ -407,10 +402,68 @@ public class AdminController {
 
     private void viewCancelledRides() {
         List<Ride> rides = adminService.getCancelledRides();
+
+        if (rides.isEmpty()) {
+            System.out.println("\n  No cancelled rides in history yet.");
+            return;
+        }
+
         System.out.println("\n--- CANCELLED RIDES (" + rides.size() + ") ---");
         for (Ride ride : rides){
             System.out.println(ride);
             System.out.println("  -----------------------------------------------");
         }
     }
+
+    private void cabManagementMenu() {
+        boolean back = false;
+        while (!back) {
+            System.out.println("\n---- CAB MANAGEMENT ----");
+            System.out.println("1. View All Cabs");
+            System.out.println("2. View Cabs by Type");
+            System.out.println("0. Back");
+            System.out.print("Choose: ");
+
+            switch (sc.nextLine().trim()) {
+                case "1": viewAllCabs();        break;
+                case "2": viewCabsByType();     break;
+                case "0": back = true;          break;
+                default:  System.out.println("Invalid option.");
+            }
+        }
+    }
+
+    private void viewAllCabs() {
+        List<Cab> cabs = adminService.getAllCabs();
+
+        if(cabs.isEmpty()){
+            System.out.println("\nNo cabs in registry");
+            return;
+        }
+
+        System.out.println("\n--- ALL CABS (" + cabs.size() + ") ---");
+
+        for (Cab cab : cabs) {
+            System.out.println(cab);
+            System.out.println("  -----------------------------------------------");
+        }
+    }
+
+    private void viewCabsByType() {
+        CabType type = InputUtil.selectCabType(sc, "Choose Cab Type: ");
+        List<Cab> cabs = adminService.getCabsByType(type);
+
+        if (cabs.isEmpty()) {
+            System.out.println("  No " + type + " cabs registered.");
+            return;
+        }
+
+        System.out.println("\n--- " + type + " CABS (" + cabs.size() + ") ---");
+
+        for (Cab cab : cabs) {
+            System.out.println(cab);
+            System.out.println("  -----------------------------------------------");
+        }
+    }
+
 }

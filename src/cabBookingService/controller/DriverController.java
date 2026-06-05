@@ -31,7 +31,6 @@ public class DriverController {
             System.out.println("2. Update Profile");
             System.out.println("3. Show earnings");
             System.out.println("4. View ride history");
-            //have to do change password
             System.out.println("0. Back");
 
             System.out.print("Choose: ");
@@ -112,43 +111,9 @@ public class DriverController {
         System.out.println("\n--- UPDATE PROFILE ---");
         System.out.println("(Press Enter to keep current value)");
 
-        System.out.println("\nCurrent Name : " + driver.getName());
+        String name = InputUtil.getOptionalName(sc, driver.getName());
 
-        System.out.print("New name: ");
-        String name = sc.nextLine().trim();
-
-        if(name.isEmpty()){
-            name = driver.getName();
-        }
-        else {
-            while (!Validator.isValidName(name)) {
-                System.out.print("Enter valid name (minimum 3 characters): ");
-                name = sc.nextLine().trim();
-                if (name.isEmpty()) {
-                    name = driver.getName();
-                    break;
-                }
-            }
-        }
-
-        System.out.println("\nCurrent Phone : " + driver.getPhone());
-
-        System.out.print("New Phone: ");
-        String phone = sc.nextLine().trim();
-
-        if(phone.isEmpty()){
-            phone = driver.getPhone();
-        }
-        else {
-            while (!Validator.isValid10DigitPhone(phone)) {
-                System.out.print("Enter valid phone: ");
-                phone = sc.nextLine().trim();
-                if (phone.isEmpty()) {
-                    phone = driver.getPhone();
-                    break;
-                }
-            }
-        }
+        String phone = InputUtil.getOptionalPhone(sc, driver.getPhone());
 
         System.out.println("  Current location: " + driver.getCurrentLocation());
 
@@ -157,13 +122,9 @@ public class DriverController {
         if (InputUtil.getYesOrNo(sc, "  Update location?")) {
             location = InputUtil.selectLocation(sc, "Select new location:");
         }
-        if(location == null){
-            location = driver.getCurrentLocation();
-        }
-
-        driverService.updateProfile(driver, name, phone, location);
 
         try {
+            driverService.updateProfile(driver, name, phone, location);
             System.out.println("\nProfile updated successfully");
             printUpdatedProfile(driver);
         }
@@ -187,8 +148,17 @@ public class DriverController {
     }
 
     private void showEarnings(Driver driver){
-        System.out.println("TOTAL EARNINGS = ₹" + driver.getEarnings());
-    }
+        System.out.println("TOTAL EARNINGS      :   ₹" + driver.getEarnings());
+        if (driver.getRatingCount() > 0) {
+            double avgRating = (double) driver.getTotalRatingSum() / driver.getRatingCount();
+            System.out.println("RATINGS AVG         :   " + avgRating);
+        }
+        else {
+            System.out.println("RATINGS AVG         :   No ratings yet");
+        }
+        System.out.println("TOTAL RATINGS       :   " + driver.getRatingCount());
+        System.out.println("TOTAL RATING POINTS :   " + driver.getTotalRatingSum());
+     }
 
     private void viewRideHistory(Driver driver){
         List<Ride> rides = driverService.getRidesByDriver(driver);

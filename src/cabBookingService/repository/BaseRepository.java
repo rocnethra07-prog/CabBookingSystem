@@ -32,7 +32,7 @@ public abstract class BaseRepository<T> implements Repository<T> {
         T entity = storage.get(key.trim());
 
         if(entity == null){
-            throw new CabBookingException("No record found for key : " + key);
+            throw new CabBookingException("No record found for key: " + key);
         }
 
         return entity;
@@ -58,7 +58,6 @@ public abstract class BaseRepository<T> implements Repository<T> {
         storage.remove(key.trim());
     }
 
-    @Override
     public int count() {
         return storage.size();
     }

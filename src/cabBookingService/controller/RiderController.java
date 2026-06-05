@@ -27,7 +27,7 @@ public class RiderController {
             System.out.println("2. View current ride");
             System.out.println("3. View ride history");
             System.out.println("4. Update profile");
-            //have to do change password
+            System.out.println("5. Rate last ride");
             System.out.println("0. Logout");
             System.out.print("Choose: ");
 
@@ -44,6 +44,9 @@ public class RiderController {
                 case "4":
                     updateProfile(rider);
                     break;
+                case "5":
+                    rateLastRide(rider);
+                    break;
                 case "0":
                     back = true;
                     break;
@@ -55,6 +58,7 @@ public class RiderController {
 
     private void bookRide(User rider){
 
+        //
         if(riderService.hasActiveRide(rider)){
             System.out.println("You already have an active ride. Complete or cancel it first");
             return;
@@ -73,7 +77,7 @@ public class RiderController {
             break;
         }
 
-        CabType cabType = InputUtil.selectCabType(sc);
+        CabType cabType = InputUtil.selectCabType(sc, "Choose Cab Type: ");
 
         try {
             Ride ride = riderService.bookRide(rider, pickupLocation, dropLocation, cabType);
@@ -147,37 +151,9 @@ public class RiderController {
         System.out.println("\n--- UPDATE PROFILE ---");
         System.out.println("(Press Enter to keep current value)");
 
-        System.out.println("\nCurrent Name : " + rider.getName());
+        String name = InputUtil.getOptionalName(sc, rider.getName());
 
-        System.out.print("New name: ");
-        String name = sc.nextLine().trim();
-
-        if(name.isEmpty()){
-            name = rider.getName();
-        }
-        else {
-            while (!Validator.isValidName(name)) {
-                System.out.print("Enter valid name (minimum 3 characters): ");
-                name = sc.nextLine().trim();
-                if (name.isEmpty()) { name = rider.getName(); break; }
-            }
-        }
-
-        System.out.println("\nCurrent Phone : " + rider.getPhone());
-
-        System.out.print("New Phone: ");
-        String phone = sc.nextLine().trim();
-
-        if(phone.isEmpty()){
-            phone = rider.getPhone();
-        }
-        else {
-            while (!Validator.isValid10DigitPhone(phone)) {
-                System.out.print("Enter valid phone: ");
-                phone = sc.nextLine().trim();
-                if (phone.isEmpty()) { phone = rider.getPhone(); break; }
-            }
-        }
+        String phone = InputUtil.getOptionalPhone(sc, rider.getPhone());
 
         try {
             riderService.updateProfile(name, phone, rider);
@@ -218,6 +194,64 @@ public class RiderController {
             System.out.println("Ride cancelled successfully.");
         } catch (CabBookingException e) {
             System.out.println("[!] " + e.getMessage());
+        }
+    }
+
+    private void rateLastRide(User rider) {
+        Ride lastRide = riderService.getLastCompletedRide(rider);
+
+        if (lastRide == null) {
+            System.out.println("\nNo completed rides pending a rating.");
+            return;
+        }
+
+        if (lastRide.isRated()) {
+            System.out.println("\nYour last completed ride is already rated.");
+            return;
+        }
+
+        Driver driver = riderService.getDriverForRide(lastRide);
+        String driverName = (driver != null) ? driver.getName() : "your driver";
+
+        System.out.println("\n--- RATE YOUR RIDE ---");
+        System.out.println("  Driver  : " + driverName);
+        System.out.println("  Pickup  : " + lastRide.getPickupLocation());
+        System.out.println("  Drop    : " + lastRide.getDropLocation());
+        System.out.println("  Fare    : ₹" + lastRide.getFare());
+
+        submitRating(lastRide, rider, driverName);
+    }
+
+    private void submitRating(Ride ride, User rider, String driverName) {
+        System.out.println();
+        System.out.println("  1 ★          Terrible   ");
+        System.out.println("  2 ★★         Poor       ");
+        System.out.println("  3 ★★★        Average    ");
+        System.out.println("  4 ★★★★       Good       ");
+        System.out.println("  5 ★★★★★      Excellent  ");
+
+        int rating = 0;
+        while (rating < 1 || rating > 5) {
+            String input = InputUtil.getNonEmptyInput(sc,"  Enter rating (1–5): ","  [!] Rating cannot be empty. Please enter a number from 1 to 5.");
+            try {
+                rating = Integer.parseInt(input);
+                if (rating < 1 || rating > 5) {
+                    System.out.println("  [!] Invalid rating. Please enter a number from 1 to 5.");
+                    rating = 0;
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("  [!] Please enter a valid number (1–5).");
+            }
+        }
+
+        try {
+            riderService.rateDriver(ride, rider, rating);
+            String stars = "★".repeat(rating) + "☆".repeat(5 - rating);
+            System.out.println("\n  ✅ Thank you for rating " + driverName + "!");
+            System.out.println("  Your rating : " + stars + " (" + rating + "/5)");
+            System.out.println();
+        } catch (CabBookingException e) {
+            System.out.println("\n  [!] " + e.getMessage());
         }
     }
 }

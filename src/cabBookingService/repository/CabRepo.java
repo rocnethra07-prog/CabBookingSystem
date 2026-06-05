@@ -2,6 +2,11 @@ package cabBookingService.repository;
 
 import cabBookingService.exception.CabBookingException;
 import cabBookingService.model.Cab;
+import cabBookingService.model.CabType;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class CabRepo extends BaseRepository<Cab>{
 
@@ -22,8 +27,8 @@ public class CabRepo extends BaseRepository<Cab>{
     }
 
     public boolean existsByRegNumber(String regNumber) {
-        if(regNumber == null){
-            throw new CabBookingException("Registration number cannot be null");
+        if(regNumber == null || regNumber.isBlank()){
+            throw new CabBookingException("Registration number cannot be null or blank");
         }
 
         for(Cab cab : storage.values()){
@@ -34,4 +39,13 @@ public class CabRepo extends BaseRepository<Cab>{
         return false;
     }
 
+    public List<Cab> findCabsByCabType(CabType cabType){
+        List<Cab> cabs = new ArrayList<>();
+        for(Cab cab : storage.values()){
+            if(cab.getCabType() == cabType){
+                cabs.add(cab);
+            }
+        }
+        return Collections.unmodifiableList(cabs);
+    }
 }

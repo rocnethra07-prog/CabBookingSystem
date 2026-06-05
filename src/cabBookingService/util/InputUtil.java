@@ -41,26 +41,26 @@ public class InputUtil {
         return getValidatedInput(sc, prompt, Validator::isValidPassword, errorMessage);
     }
 
-    public static CabType selectCabType(Scanner sc){
-
+    public static CabType selectCabType(Scanner sc, String prompt){
+        CabType[] cabTypes = CabType.values();
         while (true){
-            System.out.println("Cab type:");
-            System.out.println("1 MINI");
-            System.out.println("2 SEDAN");
-            System.out.println("3 SUV");
-
+            System.out.println(prompt);
+            for(int i = 0; i<cabTypes.length ; i++){
+                System.out.println(i+1 + ". " + cabTypes[i]);
+            }
+            System.out.print("Choice: ");
             String input = sc.nextLine().trim();
 
-            switch (input){
-                case "1":
-                    return CabType.MINI;
-                case "2":
-                    return CabType.SEDAN;
-                case "3":
-                    return CabType.SUV;
-                default:
-                    System.out.println("Invalid cab type");
+            try{
+                int idx = Integer.parseInt(input);
+                if(idx >= 1 && idx <= cabTypes.length){
+                    return cabTypes[idx - 1];
+                }
             }
+            catch (NumberFormatException ignored) {
+
+            }
+            System.out.println("Invalid selection. Enter a number between 1 and " + cabTypes.length);
         }
     }
 
@@ -69,7 +69,7 @@ public class InputUtil {
         while (true) {
             System.out.println(prompt);
             for (int i = 0; i < locations.length; i++) {
-                System.out.printf(i + 1 + ". " + locations[i] + "\n");
+                System.out.println(i + 1 + ". " + locations[i]);
             }
             System.out.print("  Choice: ");
             String input = sc.nextLine().trim();
@@ -82,7 +82,7 @@ public class InputUtil {
             catch (NumberFormatException ignored) {
 
             }
-            System.out.println("Invalid selection. Enter a number between 1 and " + locations.length + ".");
+            System.out.println("Invalid selection. Enter a number between 1 and " + locations.length);
         }
     }
 
@@ -100,5 +100,25 @@ public class InputUtil {
 
             System.out.println("Invalid input. Please enter y or n.");
         }
+    }
+
+    public static String getOptionalName(Scanner sc, String current) {
+        System.out.print("New name (Enter to keep '" + current + "'): ");
+        String input = sc.nextLine().trim();
+        if (input.isEmpty()) {
+            return current;
+        }
+        return getValidatedInput(sc, "Enter valid name (min 3 chars): ",
+                Validator::isValidName, "Name must be at least 3 characters.");
+    }
+
+    public static String getOptionalPhone(Scanner sc, String current) {
+        System.out.print("New phone (Enter to keep current): ");
+        String input = sc.nextLine().trim();
+        if (input.isEmpty()){
+            return current;
+        }
+        return getValidatedInput(sc, "Enter valid 10-digit phone: ",
+                Validator::isValid10DigitPhone, "Invalid phone number.");
     }
 }

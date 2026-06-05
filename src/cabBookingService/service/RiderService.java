@@ -99,6 +99,10 @@ public class RiderService {
             throw new CabBookingException("Only the rider who booked this ride can cancel it");
         }
 
+        if (ride.getRideStatus() != RideStatus.BOOKED) {
+            throw new CabBookingException("Ride status must be BOOKED to end it");
+        }
+
         ride.setRideStatus(RideStatus.CANCELLED);
         markDriverAsAvailable(ride);
     }
@@ -111,7 +115,30 @@ public class RiderService {
         driver.setAvailable(true);
     }
 
-    public List<Ride> getRidesByRider(User rider){
+    public List<Ride> getRidesByRider(User rider) {
         return rideRepo.findRidesByRider(rider.getUserId());
     }
+    public Ride getLastCompletedRide(User rider) {
+        return rideRepo.findLastCompletedRideByRider(rider.getUserId());
+    }
+
+    public void rateDriver(Ride ride, User rider, int rating) {
+
+        if (!ride.getRiderId().equals(rider.getUserId())) {
+            throw new CabBookingException("You can only rate your own ride.");
+        }
+
+        if(ride.isRated()){
+            throw new CabBookingException("Ride is already rated.");
+        }
+
+        ride.setRating(rating);
+
+        Driver driver = driverRepo.findByKey(ride.getDriverId());
+        if (driver == null) {
+            throw new CabBookingException("Driver not found for this ride.");
+        }
+        driver.addRating(rating);
+    }
+
 }
