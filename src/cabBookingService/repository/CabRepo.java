@@ -10,7 +10,7 @@ import java.util.List;
 
 public class CabRepo extends BaseRepository<Cab>{
 
-    private final static CabRepo INSTANCE = new CabRepo() ;
+    private static final CabRepo INSTANCE = new CabRepo() ;
 
     private CabRepo(){}
 

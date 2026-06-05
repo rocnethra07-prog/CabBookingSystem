@@ -31,6 +31,7 @@ public class DriverService {
 
     public void completeRide(Ride ride, Driver driver){
         endRide(ride, driver, RideStatus.COMPLETED);
+        driver.setCurrentLocation(ride.getDropLocation());
         driver.addEarnings(ride.getFare());
     }
 
