@@ -12,7 +12,6 @@ public class UserAuth {
     private final String hashedPassword;
 
     public UserAuth(String password) {
-
         if(password == null || password.isBlank()){
             throw new CabBookingException("Password cannot be null or empty.");
         }

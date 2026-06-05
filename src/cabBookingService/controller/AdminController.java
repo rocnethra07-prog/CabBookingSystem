@@ -139,6 +139,7 @@ public class AdminController {
 
         CabType cabType = InputUtil.selectCabType(sc, "Enter Cab Type: ");
 
+
         try {
             DriverRegistrationData request = new DriverRegistrationData.Builder()
                     .name(name)
@@ -158,7 +159,8 @@ public class AdminController {
 
             System.out.println(driver);
 
-        } catch (CabBookingException e) {
+        }
+        catch (CabBookingException e) {
             System.out.println("[!] Failed to add driver: " + e.getMessage());
         }
     }

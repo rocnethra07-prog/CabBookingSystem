@@ -17,8 +17,8 @@ public class Ride {
     private final BigDecimal fare;
     private RideStatus rideStatus;
     private final LocalDateTime bookedAt;
-    private LocalDateTime completedAt;
-    private LocalDateTime cancelledAt;
+    private LocalDateTime completedAt; //by default null
+    private LocalDateTime cancelledAt; //by default null
 
     private Integer rating; // 1–5, null if not yet rated
 
@@ -65,9 +65,6 @@ public class Ride {
         this.fare = fare;
         this.rideStatus = RideStatus.BOOKED;
         this.bookedAt = LocalDateTime.now();
-        this.rating = null;
-        this.cancelledAt = null;
-        this.completedAt = null;
     }
 
     public String getId() {

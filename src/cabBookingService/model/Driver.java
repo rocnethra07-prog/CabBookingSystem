@@ -12,8 +12,8 @@ public class Driver extends User{
     private Location currentLocation;
     private BigDecimal earnings;
     private boolean isAvailable;
-    private int totalRatingSum;   // sum of all ratings received
-    private int ratingCount;
+    private int totalRatingSum;   // sum of all ratings received 0 by default
+    private int ratingCount; //number of ratings got, 0 by default
 
     public Driver(String name, String phone,String email,Location currentLocation, String licenseNumber, String cabId){
         super(name, phone, email, UserRole.DRIVER);
@@ -33,8 +33,6 @@ public class Driver extends User{
         this.earnings = BigDecimal.ZERO;
         this.isAvailable = true;
         this.cabId = cabId.trim();
-        this.totalRatingSum = 0;
-        this.ratingCount = 0;
     }
 
     public String getCabId() {

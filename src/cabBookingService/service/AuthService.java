@@ -2,7 +2,6 @@ package cabBookingService.service;
 
 import cabBookingService.auth.UserAuth;
 import cabBookingService.exception.CabBookingException;
-import cabBookingService.model.Driver;
 import cabBookingService.model.User;
 import cabBookingService.model.UserRole;
 import cabBookingService.repository.UserAuthRepo;

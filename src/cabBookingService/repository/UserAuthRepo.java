@@ -12,12 +12,6 @@ public class UserAuthRepo extends BaseRepository<UserAuth> {
         return INSTANCE;
     }
 
-    // No containsKey check. Saves the authentication record for the given user.
-    // If a key already exists for that user, it will be replaced and password changes
-    public void save(String userId, UserAuth auth){
-        super.save(userId, auth);
-    }
-
     public boolean validateCredentials(String userId, String password){
         if (userId == null || userId.trim().isEmpty()) {
             return false;

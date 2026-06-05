@@ -29,10 +29,6 @@ public class RiderService {
 
     public Ride bookRide(User rider, Location pickupLocation, Location dropLocation, CabType cabType) {
 
-        if (hasActiveRide(rider)) {
-            throw new CabBookingException("You already have an active ride.");
-        }
-
         Driver driver = findDriver(cabType, pickupLocation);
         if (driver == null) {
             throw new CabBookingException("No " + cabType.name() + " drivers are available right now. Please try a different cab type or try again later.");

@@ -58,7 +58,6 @@ public class RiderController {
 
     private void bookRide(User rider){
 
-        //
         if(riderService.hasActiveRide(rider)){
             System.out.println("You already have an active ride. Complete or cancel it first");
             return;
@@ -84,10 +83,8 @@ public class RiderController {
             Driver driver = riderService.getDriverForRide(ride);
             System.out.println("\n  Ride booked successfully!");
             System.out.println(ride);
-            if (driver != null) {
-                System.out.println("  Driver       : " + driver.getName());
-                System.out.println("  Driver phone : " + driver.getPhone());
-            }
+            System.out.println("  Driver       : " + driver.getName());
+            System.out.println("  Driver phone : " + driver.getPhone());
         }
         catch (CabBookingException e){
             System.out.println("\n[!] " + e.getMessage());
@@ -155,6 +152,11 @@ public class RiderController {
 
         String phone = InputUtil.getOptionalPhone(sc, rider.getPhone());
 
+        if (name.equals(rider.getName()) && phone.equals(rider.getPhone())) {
+            System.out.println("\nNo changes made. Profile remains the same.");
+            return;
+        }
+
         try {
             riderService.updateProfile(name, phone, rider);
             System.out.println("\nProfile updated successfully");
@@ -201,7 +203,7 @@ public class RiderController {
         Ride lastRide = riderService.getLastCompletedRide(rider);
 
         if (lastRide == null) {
-            System.out.println("\nNo completed rides pending a rating.");
+            System.out.println("\nNo completed ride pending a rating.");
             return;
         }
 
@@ -224,11 +226,11 @@ public class RiderController {
 
     private void submitRating(Ride ride, User rider, String driverName) {
         System.out.println();
-        System.out.println("  1 ★          Terrible   ");
-        System.out.println("  2 ★★         Poor       ");
-        System.out.println("  3 ★★★        Average    ");
-        System.out.println("  4 ★★★★       Good       ");
-        System.out.println("  5 ★★★★★      Excellent  ");
+        System.out.println(" 1 ★          Terrible   ");
+        System.out.println(" 2 ★★         Poor       ");
+        System.out.println(" 3 ★★★        Average    ");
+        System.out.println(" 4 ★★★★       Good       ");
+        System.out.println(" 5 ★★★★★      Excellent  ");
 
         int rating = 0;
         while (rating < 1 || rating > 5) {
@@ -247,7 +249,7 @@ public class RiderController {
         try {
             riderService.rateDriver(ride, rider, rating);
             String stars = "★".repeat(rating) + "☆".repeat(5 - rating);
-            System.out.println("\n  ✅ Thank you for rating " + driverName + "!");
+            System.out.println("\n Thank you for rating " + driverName + "!");
             System.out.println("  Your rating : " + stars + " (" + rating + "/5)");
             System.out.println();
         } catch (CabBookingException e) {

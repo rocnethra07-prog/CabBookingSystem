@@ -2,10 +2,7 @@ package cabBookingService.repository;
 
 import cabBookingService.exception.CabBookingException;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public abstract class BaseRepository<T> implements Repository<T> {
 
@@ -39,7 +36,7 @@ public abstract class BaseRepository<T> implements Repository<T> {
     }
 
     public List<T> findAll() {
-        return new ArrayList<>(storage.values());
+        return Collections.unmodifiableList(new ArrayList<>(storage.values()));
     }
 
     public boolean existsByKey(String key) {
