@@ -50,7 +50,7 @@ public class RiderService {
 
             Cab cab = cabRepo.findByKey(driver.getCabId());
 
-            if (cab != null && cab.getCabType() == cabType) {
+            if (cab.getCabType() == cabType) {
                 matchingDrivers.add(driver);
             }
         }
@@ -105,9 +105,6 @@ public class RiderService {
 
     private void markDriverAsAvailable(Ride ride){
         Driver driver = getDriverForRide(ride);
-        if(driver == null){
-            return;
-        }
         driver.setAvailable(true);
     }
 
@@ -115,10 +112,14 @@ public class RiderService {
         return rideRepo.findRidesByRider(rider.getUserId());
     }
     public Ride getLastCompletedRide(User rider) {
-        return rideRepo.findLastCompletedRideByRider(rider.getUserId());
+        return rideRepo.findLastCompletedRide(rider.getUserId());
     }
 
     public void rateDriver(Ride ride, User rider, int rating) {
+
+        if(!ride.getRiderId().equals(rider.getUserId())){
+            throw new CabBookingException("Only the booked user can rate this ride");
+        }
 
         if(ride.isRated()){
             throw new CabBookingException("Ride is already rated.");

@@ -73,7 +73,7 @@ public class RideRepo extends BaseRepository<Ride> {
     }
 
 
-    public Ride findLastCompletedRideByRider(String riderId) {
+    public Ride findLastCompletedRide(String riderId) {
         Ride latestRide = null;
         for (Ride ride : storage.values()) {
             if (!Objects.equals(ride.getRiderId(), riderId)) {

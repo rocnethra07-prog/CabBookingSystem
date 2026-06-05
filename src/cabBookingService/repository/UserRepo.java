@@ -30,7 +30,17 @@ public class UserRepo extends BaseRepository<User> {
         if(email == null || email.isBlank()){
             throw new CabBookingException("Email cannot be null or blank");
         }
-        return findByKey(email.trim().toLowerCase());
+        //null if user does not exist
+        User user = null;
+
+        try {
+             user = findByKey(email.trim().toLowerCase());
+        }
+        catch (CabBookingException ignored){
+
+        }
+
+        return user;
     }
 
     public boolean existsByEmail(String email){
