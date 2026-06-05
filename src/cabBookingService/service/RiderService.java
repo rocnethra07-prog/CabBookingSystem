@@ -22,7 +22,7 @@ public class RiderService {
         this.cabRepo = cabRepo;
     }
 
-    public void updateProfile(String name, String phone, User user){
+    public void updateProfile(User user, String name, String phone){
         user.setName(name);
         user.setPhone(phone);
     }
@@ -96,7 +96,7 @@ public class RiderService {
         }
 
         if (ride.getRideStatus() != RideStatus.BOOKED) {
-            throw new CabBookingException("Ride status must be BOOKED to end it");
+            throw new CabBookingException("Ride status must be BOOKED to cancel it");
         }
 
         ride.setRideStatus(RideStatus.CANCELLED);
@@ -120,20 +120,16 @@ public class RiderService {
 
     public void rateDriver(Ride ride, User rider, int rating) {
 
-        if (!ride.getRiderId().equals(rider.getUserId())) {
-            throw new CabBookingException("You can only rate your own ride.");
-        }
-
         if(ride.isRated()){
             throw new CabBookingException("Ride is already rated.");
         }
 
-        ride.setRating(rating);
-
-        Driver driver = driverRepo.findByKey(ride.getDriverId());
-        if (driver == null) {
-            throw new CabBookingException("Driver not found for this ride.");
+        if(rating < 1 || rating > 5){
+            throw new CabBookingException("Rating must be between 1 and 5");
         }
+
+        ride.setRating(rating);
+        Driver driver = driverRepo.findByKey(ride.getDriverId());
         driver.addRating(rating);
     }
 

@@ -123,7 +123,7 @@ public class DriverController {
             location = InputUtil.selectLocation(sc, "Select new location:");
         }
 
-        if (name.equals(driver.getName()) && phone.equals(driver.getPhone()) && location != driver.getCurrentLocation()) {
+        if (name.equals(driver.getName()) && phone.equals(driver.getPhone()) && location == driver.getCurrentLocation()) {
             System.out.println("\nNo changes made. Profile remains the same.");
             return;
         }

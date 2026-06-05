@@ -25,6 +25,8 @@ public class AuthController {
 
         while (true){
             email = InputUtil.getEmail(sc, "Enter email: ", "Invalid email format.");
+
+            //Pre-check for UX
             if(!authService.isUserExists(email)){
                 break;
             }

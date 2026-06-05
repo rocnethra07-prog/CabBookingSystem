@@ -43,10 +43,6 @@ public class DriverService {
             throw new CabBookingException("Only the assigned driver can end this ride");
         }
 
-        if (ride.getRideStatus() == RideStatus.CANCELLED || ride.getRideStatus() == RideStatus.COMPLETED) {
-            throw new CabBookingException("Ride is already " + ride.getRideStatus());
-        }
-
         if (ride.getRideStatus() != RideStatus.BOOKED) {
             throw new CabBookingException("Ride status must be BOOKED to end it");
         }

@@ -20,7 +20,6 @@ public class AdminController {
     }
 
     public void adminDashBoard() {
-        System.out.println("--- ADMIN DASHBOARD ---");
 
         boolean back = false;
         while (!back) {
@@ -111,6 +110,7 @@ public class AdminController {
         String email;
         while (true) {
             email = InputUtil.getEmail(sc, "  Email  : ", "Invalid email. Enter a valid email.");
+            //Pre-check for UX;
             if (!adminService.isUserExists(email)) break;
             System.out.println("[!]This email is already registered.");
         }

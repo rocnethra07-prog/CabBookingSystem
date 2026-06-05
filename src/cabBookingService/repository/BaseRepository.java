@@ -41,7 +41,7 @@ public abstract class BaseRepository<T> implements Repository<T> {
 
     public boolean existsByKey(String key) {
         if(key == null || key.isBlank()){
-            throw new CabBookingException("The key cannot be null ");
+            throw new CabBookingException("The key cannot be null or blank ");
         }
         return storage.containsKey(key.trim());
     }

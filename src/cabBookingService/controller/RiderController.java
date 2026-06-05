@@ -19,10 +19,10 @@ public class RiderController {
     }
 
     public void showMenu(User rider){
-        System.out.println("\n--- RIDER MENU ---");
 
         boolean back = false;
         while(!back) {
+            System.out.println("\n--- RIDER MENU ---");
             System.out.println("1. Book ride");
             System.out.println("2. View current ride");
             System.out.println("3. View ride history");
@@ -158,7 +158,7 @@ public class RiderController {
         }
 
         try {
-            riderService.updateProfile(name, phone, rider);
+            riderService.updateProfile(rider,name, phone);
             System.out.println("\nProfile updated successfully");
             printUpdatedProfile(rider);
         }
@@ -209,6 +209,7 @@ public class RiderController {
 
         if (lastRide.isRated()) {
             System.out.println("\nYour last completed ride is already rated.");
+            System.out.println(lastRide.getId() + " : " + lastRide.getRating() + " / 5");
             return;
         }
 

@@ -13,18 +13,15 @@ public class UserAuthRepo extends BaseRepository<UserAuth> {
     }
 
     public boolean validateCredentials(String userId, String password){
-        if (userId == null || userId.trim().isEmpty()) {
+        if (userId == null || userId.isBlank()) {
             return false;
         }
 
-        if(!existsByKey(userId)){
+        if(!existsByKey(userId.trim())){
             return false;
         }
 
         UserAuth auth = findByKey(userId.trim());
-        if (auth == null) {
-            return false;
-        }
 
         return auth.checkPassword(password);
     }
