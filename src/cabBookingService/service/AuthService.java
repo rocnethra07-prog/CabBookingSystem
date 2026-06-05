@@ -59,4 +59,18 @@ public class AuthService {
         userRepo.deleteByEmail(user.getEmail());
         userAuthRepo.deleteByKey(user.getUserId());
     }
+
+    public void changePassword(User user, String currentPassword, String newPassword) {
+        if (!userAuthRepo.validateCredentials(user.getUserId(), currentPassword)) {
+            throw new CabBookingException("Current password is incorrect.");
+        }
+
+        UserAuth auth = userAuthRepo.findByKey(user.getUserId());
+
+        if (auth.checkPassword(newPassword)) {
+            throw new CabBookingException("New password must be different from the current password.");
+        }
+
+        auth.updatePassword(newPassword);
+    }
 }

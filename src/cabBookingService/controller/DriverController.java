@@ -5,6 +5,7 @@ import cabBookingService.model.Cab;
 import cabBookingService.model.Driver;
 import cabBookingService.model.Location;
 import cabBookingService.model.Ride;
+import cabBookingService.service.AuthService;
 import cabBookingService.service.DriverService;
 import cabBookingService.util.InputUtil;
 import cabBookingService.util.Validator;
@@ -15,10 +16,12 @@ import java.util.Scanner;
 public class DriverController {
 
     private final DriverService driverService;
+    private final AuthService authService;
     private final Scanner sc;
 
-    public DriverController(DriverService driverService, Scanner sc){
+    public DriverController(DriverService driverService, AuthService authService, Scanner sc){
         this.driverService = driverService;
+        this.authService = authService;
         this.sc = sc;
     }
 
@@ -31,6 +34,7 @@ public class DriverController {
             System.out.println("2. Update Profile");
             System.out.println("3. Show earnings");
             System.out.println("4. View ride history");
+            System.out.println("5. Change password");
             System.out.println("0. Back");
 
             System.out.print("Choose: ");
@@ -49,6 +53,9 @@ public class DriverController {
                     break;
                 case "4":
                     viewRideHistory(driver);
+                    break;
+                case "5":
+                    changePassword(driver);
                     break;
                 case "0":
                     back = true;
@@ -197,6 +204,38 @@ public class DriverController {
         }
         catch (CabBookingException e) {
             System.out.println("  [!] " + e.getMessage());
+        }
+    }
+
+    private void changePassword(Driver driver) {
+        System.out.println("\n--- CHANGE PASSWORD ---");
+
+        String currentPassword = InputUtil.getPassword(sc ,"  Current password : ",  " Password must be at least 8 characters, with an uppercase letter, a lowercase letter, and a special character (@#$%^&+=!-_). Spaces are not allowed.");
+
+
+        String newPassword = InputUtil.getPassword(
+                sc,
+                "  New password     : ",
+                "  [!] Password must be at least 8 characters, with an uppercase letter, a lowercase letter, and a special character (@#$%^&+=!-_). Spaces are not allowed."
+        );
+
+        String confirmPassword = InputUtil.getPassword(
+                sc,
+                "  Confirm password : ",
+                "  [!] Password must be at least 8 characters, with an uppercase letter, a lowercase letter, and a special character (@#$%^&+=!-_). Spaces are not allowed."
+        );
+
+        if (!newPassword.equals(confirmPassword)) {
+            System.out.println("\n  [!] Passwords do not match. Password was not changed.");
+            return;
+        }
+
+        try {
+            authService.changePassword(driver, currentPassword, newPassword);
+            System.out.println("\n  Password changed successfully.");
+        }
+        catch (CabBookingException e) {
+            System.out.println("\n  [!] " + e.getMessage());
         }
     }
 }

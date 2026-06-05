@@ -9,7 +9,7 @@ import org.mindrot.jbcrypt.BCrypt;
 //Auth credential related class
 //Store it as a Map in Repo as User ID (key) -> UserAuth
 public class UserAuth {
-    private final String hashedPassword;
+    private String hashedPassword;
 
     public UserAuth(String password) {
         if(password == null || password.isBlank()){
@@ -25,5 +25,10 @@ public class UserAuth {
         return BCrypt.checkpw(inputPassword, this.hashedPassword);
     }
 
-    //update password not implemented
+    public void updatePassword(String newPassword) {
+        if (newPassword == null || newPassword.isBlank()) {
+            throw new CabBookingException("New password cannot be null or empty.");
+        }
+        this.hashedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
+    }
 }

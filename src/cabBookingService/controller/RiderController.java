@@ -2,6 +2,7 @@ package cabBookingService.controller;
 
 import cabBookingService.exception.CabBookingException;
 import cabBookingService.model.*;
+import cabBookingService.service.AuthService;
 import cabBookingService.service.RiderService;
 import cabBookingService.util.InputUtil;
 import cabBookingService.util.Validator;
@@ -12,10 +13,12 @@ import java.util.Scanner;
 public class RiderController {
     private final Scanner sc;
     private final RiderService riderService;
+    private final AuthService authService;
 
-    public RiderController(RiderService riderService, Scanner sc){
+    public RiderController(RiderService riderService, AuthService authService, Scanner sc){
         this.sc = sc;
         this.riderService = riderService;
+        this.authService = authService;
     }
 
     public void showMenu(User rider){
@@ -28,6 +31,7 @@ public class RiderController {
             System.out.println("3. View ride history");
             System.out.println("4. Update profile");
             System.out.println("5. Rate last ride");
+            System.out.println("6. Change password");
             System.out.println("0. Logout");
             System.out.print("Choose: ");
 
@@ -46,6 +50,9 @@ public class RiderController {
                     break;
                 case "5":
                     rateLastRide(rider);
+                    break;
+                case "6":
+                    changePassword(rider);
                     break;
                 case "0":
                     back = true;
@@ -254,6 +261,37 @@ public class RiderController {
             System.out.println("  Your rating : " + stars + " (" + rating + "/5)");
             System.out.println();
         } catch (CabBookingException e) {
+            System.out.println("\n  [!] " + e.getMessage());
+        }
+    }
+
+    private void changePassword(User rider) {
+        System.out.println("\n--- CHANGE PASSWORD ---");
+
+        String currentPassword = InputUtil.getPassword(sc, "  Current password : ", "Current password cannot be empty.");
+
+        String newPassword = InputUtil.getPassword(
+                sc,
+                "  New password     : ",
+                "  [!] Password must be at least 8 characters, with an uppercase letter, a lowercase letter, and a special character (@#$%^&+=!-_). Spaces are not allowed."
+        );
+
+        String confirmPassword = InputUtil.getPassword(
+                sc,
+                "  Confirm password : ",
+                "  [!] Password must be at least 8 characters, with an uppercase letter, a lowercase letter, and a special character (@#$%^&+=!-_). Spaces are not allowed."
+        );
+
+        if (!newPassword.equals(confirmPassword)) {
+            System.out.println("\n  [!] Passwords do not match. Password was not changed.");
+            return;
+        }
+
+        try {
+            authService.changePassword(rider, currentPassword, newPassword);
+            System.out.println("\n  Password changed successfully.");
+        }
+        catch (CabBookingException e) {
             System.out.println("\n  [!] " + e.getMessage());
         }
     }

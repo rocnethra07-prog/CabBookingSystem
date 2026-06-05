@@ -34,8 +34,8 @@ public class MainApp {
 
         //controller:
         AdminController adminController = new AdminController(adminService, sc);
-        DriverController driverController = new DriverController(driverService, sc);
-        RiderController riderController = new RiderController(riderService, sc);
+        DriverController driverController = new DriverController(driverService, authService, sc);
+        RiderController riderController = new RiderController(riderService,authService, sc);
 
         //menu handler:
         MenuHandler menuHandler = new MenuHandler(adminController, driverController, riderController, driverService);

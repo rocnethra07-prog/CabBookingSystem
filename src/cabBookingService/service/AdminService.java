@@ -35,7 +35,7 @@ public class AdminService {
         return cabRepo.existsByRegNumber(registration);
     }
 
-    // ─── Driver Management
+    //─── Driver Management
 
     public Driver addDriver(DriverRegistrationData data) {
         Cab cab = new Cab(data.getRegistrationNumber(), data.getModel(), data.getCabType());
@@ -92,7 +92,6 @@ public class AdminService {
     public List<Ride> getRidesForDriver(String driverId) {
         return rideRepo.findRidesByDriver(driverId);
     }
-
 
     public List<User> getAllRiders() {
         return userRepo.findRiders();
