@@ -21,22 +21,19 @@ public class AuthService {
     }
 
     public User registerUser(String name, String phone, String email, String password, UserRole userRole){
-        if (isUserExists(email)) {
-            throw new CabBookingException("An account with this email already exists.");
-        }
         User user = new User(name, phone, email, userRole);
-        saveUserCredentials(user, password);
+        registerUserCredentials(user, password);
         return user;
     }
 
-    public void registerDriverCredentials(User user, String password) {
+    public void registerUserCredentials(User user, String password) {
         if (isUserExists(user.getEmail())) {
             throw new CabBookingException("An account with this email already exists.");
         }
         saveUserCredentials(user, password);
-    }
+}
 
-    private void saveUserCredentials(User user, String password) {
+        private void saveUserCredentials(User user, String password) {
         userRepo.save(user);
         userAuthRepo.save(user.getUserId(), new UserAuth(password));
     }

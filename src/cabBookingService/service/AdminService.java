@@ -55,7 +55,7 @@ public class AdminService {
             driverRepo.save(driver);
             driverSaved = true;
 
-            authService.registerDriverCredentials(driver, data.getPassword());
+            authService.registerUserCredentials(driver, data.getPassword());
 
             return driver;
 
