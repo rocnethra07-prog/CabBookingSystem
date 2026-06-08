@@ -36,19 +36,40 @@ public class AdminService {
     }
 
     //─── Driver Management
-
     public Driver addDriver(DriverRegistrationData data) {
-        Cab cab = new Cab(data.getRegistrationNumber(), data.getModel(), data.getCabType());
-        Driver driver = new Driver(
-                data.getName(), data.getPhone(), data.getEmail(),
-                data.getCurrentLocation(), data.getLicenseNumber(), cab.getCabId()
-        );
+        Cab cab = null;
+        Driver driver = null;
+        boolean cabSaved = false;
+        boolean driverSaved = false;
 
-        authService.registerDriverCredentials(driver, data.getPassword());
-        cabRepo.save(cab);
-        driverRepo.save(driver);
+        try {
+            cab = new Cab(data.getRegistrationNumber(), data.getModel(), data.getCabType());
+            driver = new Driver(
+                    data.getName(), data.getPhone(), data.getEmail(),
+                    data.getCurrentLocation(), data.getLicenseNumber(), cab.getCabId()
+            );
 
-        return driver;
+            cabRepo.save(cab);
+            cabSaved = true;
+
+            driverRepo.save(driver);
+            driverSaved = true;
+
+            authService.registerDriverCredentials(driver, data.getPassword());
+
+            return driver;
+
+        } catch (CabBookingException e) {
+
+            if (driverSaved) {
+                driverRepo.deleteByKey(driver.getUserId());
+            }
+            if (cabSaved) {
+                cabRepo.deleteByKey(cab.getCabId());
+            }
+
+            throw e;
+        }
     }
 
     //Delete a driver only if they have no active (BOOKED) ride.
@@ -92,6 +113,7 @@ public class AdminService {
     public List<Ride> getRidesForDriver(String driverId) {
         return rideRepo.findRidesByDriver(driverId);
     }
+
 
     public List<User> getAllRiders() {
         return userRepo.findRiders();
