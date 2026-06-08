@@ -31,7 +31,7 @@ public class AuthService {
             throw new CabBookingException("An account with this email already exists.");
         }
         saveUserCredentials(user, password);
-}
+    }
 
         private void saveUserCredentials(User user, String password) {
         userRepo.save(user);
